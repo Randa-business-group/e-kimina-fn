@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiErrorMessage } from "@/lib/api/error-utils";
+import { fetchDepositStatus } from "@/lib/api/group-finance-api";
 import { uploadFile } from "@/lib/api/upload-api";
 import {
   useCreateDepositMutation,
@@ -57,9 +59,11 @@ export function DepositModal({
   title,
   groupDetailLoading = false,
 }: DepositModalProps) {
+  const [includeLoan, setIncludeLoan] = useState(false);
   const depositPreview = useDepositPreviewQuery(
     groupId,
     open && isVerified && !memberLoanId,
+    includeLoan,
   );
   const loanPreview = useLoanRepaymentPreviewQuery(
     groupId,
@@ -73,6 +77,58 @@ export function DepositModal({
   const [customAmount, setCustomAmount] = useState("");
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  /** One key per payment attempt: a double click or retry never pays twice. */
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
+  /** MoMo request-to-pay waiting for the member to approve on the phone. */
+  const [pendingMomoId, setPendingMomoId] = useState<string | null>(null);
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    if (open) {
+      setIdempotencyKey(crypto.randomUUID());
+      setPendingMomoId(null);
+    } else {
+      setIncludeLoan(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!pendingMomoId) return;
+    let stopped = false;
+    const startedAt = Date.now();
+    const tick = async () => {
+      try {
+        const st = await fetchDepositStatus(groupId, pendingMomoId);
+        if (stopped) return;
+        if (st.status === "CONFIRMED") {
+          stopped = true;
+          toast.success("MTN MoMo payment confirmed and applied to your balance.");
+          setPendingMomoId(null);
+          await qc.invalidateQueries();
+          onOpenChange(false);
+        } else if (st.status === "FAILED") {
+          stopped = true;
+          toast.error(`MoMo payment failed: ${st.failureReason ?? "declined or expired"}`);
+          setPendingMomoId(null);
+          setIdempotencyKey(crypto.randomUUID());
+          await qc.invalidateQueries();
+        } else if (Date.now() - startedAt > 5 * 60_000) {
+          stopped = true;
+          toast.message("Still waiting for MTN. Your balance updates as soon as the payment is approved.");
+          setPendingMomoId(null);
+          onOpenChange(false);
+        }
+      } catch {
+        /* transient: keep polling */
+      }
+    };
+    const id = setInterval(() => void tick(), 4000);
+    void tick();
+    return () => {
+      stopped = true;
+      clearInterval(id);
+    };
+  }, [pendingMomoId, groupId, qc, onOpenChange]);
 
   const p = preview.data;
   const configured = p?.configured;
@@ -82,6 +138,8 @@ export function DepositModal({
   const contribution = p && "contribution" in p ? (p.contribution ?? 0) : 0;
   const fine = p && "fine" in p ? (p.fine ?? 0) : 0;
   const installment = p && "installment" in p ? (p.installment ?? 0) : 0;
+  const openLoan = !memberLoanId && p && "loan" in p ? (p.loan ?? null) : null;
+  const isAdvance = !memberLoanId && p && "isAdvancePayment" in p ? Boolean(p.isAdvancePayment) : false;
 
   useEffect(() => {
     if (open && configured && p && "total" in p && p.total != null) {
@@ -136,8 +194,21 @@ export function DepositModal({
           phone: method === "MTN_MOMO" ? phone.trim() : undefined,
           proofImageUrl,
           memberLoanId,
+          includeLoanRepayment: !memberLoanId && includeLoan && Boolean(openLoan) ? true : undefined,
+          idempotencyKey,
         },
       });
+      if (res.status === "PENDING") {
+        // MoMo prompt sent: wait for MTN to confirm before closing.
+        toast.message(res.message);
+        setPendingMomoId(res.id);
+        return;
+      }
+      if (res.status === "FAILED") {
+        toast.error(res.failureReason ? `MoMo payment failed: ${res.failureReason}` : res.message);
+        setIdempotencyKey(crypto.randomUUID());
+        return;
+      }
       toast.success(res.message);
       onOpenChange(false);
       setPhone("");
@@ -195,12 +266,49 @@ export function DepositModal({
             </p>
           )}
 
-          {!groupDetailLoading && isVerified && configured && p && "total" in p && p.total != null && (
+          {pendingMomoId && (
+            <div className="flex flex-col items-center gap-3 rounded-(--radius) border border-border bg-secondary/60 px-4 py-8 text-center">
+              <Loader2 className="size-6 animate-spin text-primary" />
+              <p className="text-sm font-medium text-text">Approve the payment on your phone</p>
+              <p className="text-xs text-text-muted">
+                MTN sent a prompt to {phone || "your number"}. Enter your MoMo PIN to complete it. This
+                window updates automatically.
+              </p>
+            </div>
+          )}
+
+          {!pendingMomoId && !groupDetailLoading && isVerified && configured && p && "total" in p && p.total != null && (
             <>
+              {isAdvance && (
+                <p className="text-xs text-text-muted">
+                  You are up to date. This payment covers your next contribution in advance.
+                </p>
+              )}
+              {openLoan && (
+                <label className="flex cursor-pointer items-start gap-2 rounded-(--radius) border border-border px-3 py-2.5 text-sm">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5"
+                    checked={includeLoan}
+                    onChange={(e) => setIncludeLoan(e.target.checked)}
+                  />
+                  <span>
+                    <span className="font-medium text-text">Also repay my loan</span>
+                    <span className="block text-xs text-text-muted">
+                      Outstanding {fmtCurrency(openLoan.outstanding, currency)}
+                      {openLoan.penalty > 0 ? ` (incl. ${fmtCurrency(openLoan.penalty, currency)} penalty)` : ""}
+                      {openLoan.isOverdue ? " · overdue" : ""}
+                    </span>
+                  </span>
+                </label>
+              )}
               <div className="rounded-(--radius) border border-border bg-secondary/60 px-3 py-3">
                 <p className="mb-2.5 text-sm font-medium text-text">
                   {memberLoanId ? "Loan balance due" : "Amount due breakdown"}
                 </p>
+                {!memberLoanId && fine > 0 && (
+                  <p className="mb-2 text-xs text-text-muted">Open fines are paid first, then the oldest contributions.</p>
+                )}
                 <ul className="space-y-2 text-sm">
                   {memberLoanId ? (
                     <li className="flex justify-between gap-3">
@@ -302,9 +410,8 @@ export function DepositModal({
                     autoComplete="tel"
                   />
                   <p className="text-xs text-text-muted">
-                    Payment is saved as confirmed and your contribution balance updates right away. When
-                    the MTN API is connected, a prompt can be sent to this number to complete the
-                    payment on the phone.
+                    MTN sends a payment prompt to this number. Your balance updates once you approve it
+                    with your MoMo PIN.
                   </p>
                 </div>
               )}

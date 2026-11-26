@@ -18,6 +18,20 @@ export const depositPreviewResponseSchema: z.ZodType<DepositPreviewResponse> = z
     fine: z.number().optional(),
     installment: z.number().optional(),
     total: z.number().optional(),
+    isAdvancePayment: z.boolean().optional(),
+    loan: z
+      .object({
+        memberLoanId: z.string(),
+        status: z.string(),
+        dueDate: z.string(),
+        isOverdue: z.boolean(),
+        penalty: z.number(),
+        balance: z.number(),
+        outstanding: z.number(),
+        included: z.boolean(),
+      })
+      .nullable()
+      .optional(),
   })
   .passthrough();
 
@@ -33,6 +47,11 @@ export const loanRequestPreviewResponseSchema: z.ZodType<LoanRequestPreviewRespo
     interestRate: z.number().optional(),
     repaymentPeriodDays: z.number().optional(),
     allowExceedContribution: z.boolean().optional(),
+    blockers: z.array(z.string()).optional(),
+    groupCashAvailable: z.number().optional(),
+    stakeCap: z.number().nullable().optional(),
+    lateContributions: z.number().optional(),
+    openFines: z.number().optional(),
   })
   .passthrough();
 
@@ -48,6 +67,8 @@ const pendingManualDepositItemSchema: z.ZodType<PendingManualDeposit> = z.object
     fullName: z.string(),
     email: z.string(),
   }),
+  isOwn: z.boolean().optional(),
+  canReview: z.boolean().optional(),
 });
 
 export const pendingManualDepositsResponseSchema = z.array(pendingManualDepositItemSchema);

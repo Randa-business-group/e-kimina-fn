@@ -169,10 +169,10 @@ export function useUpsertContributionConfigMutation() {
   });
 }
 
-export function useDepositPreviewQuery(groupId: string, enabled = true) {
+export function useDepositPreviewQuery(groupId: string, enabled = true, includeLoan = false) {
   return useQuery({
-    queryKey: groupKeys.financeDepositPreview(groupId),
-    queryFn: () => fetchDepositPreview(groupId),
+    queryKey: [...groupKeys.financeDepositPreview(groupId), { includeLoan }],
+    queryFn: () => fetchDepositPreview(groupId, includeLoan),
     enabled: Boolean(groupId) && enabled,
   });
 }
@@ -363,7 +363,8 @@ export function useUpdateGroupMutation() {
 export function useDeleteGroupMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (groupId: string) => deleteGroup(groupId),
+    mutationFn: (v: { groupId: string; confirmName: string; reason?: string }) =>
+      deleteGroup(v.groupId, { confirmName: v.confirmName, reason: v.reason }),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: groupKeys.all });
       await qc.invalidateQueries({ queryKey: authKeys.profile() });

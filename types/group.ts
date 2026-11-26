@@ -11,6 +11,8 @@ export type Group = {
   maxMembers: number;
   createdAt: string;
   memberCount?: number;
+  verificationStatus?: "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
+  verificationRejectionReason?: string | null;
 };
 
 /** `GET /groups/:id` for an active member — includes role hints. */

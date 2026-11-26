@@ -6,6 +6,7 @@ import type {
   CreateDepositResult,
   CreateLoanApplicationResult,
   DepositPreviewResponse,
+  DepositStatusResult,
   LoanRequestPreviewResponse,
   MyPendingManualDeposit,
   PendingManualDeposit,
@@ -24,6 +25,14 @@ const createDepositResultSchema = z.object({
   amount: z.number(),
   currency: z.string(),
   status: z.string(),
+  failureReason: z.string().nullable().optional(),
+});
+
+const depositStatusSchema = createDepositResultSchema.extend({
+  paymentMethod: z.enum(["MTN_MOMO", "MANUAL_TRANSFER"]),
+  contributionPortion: z.number(),
+  finePortion: z.number(),
+  installmentPortion: z.number(),
 });
 
 const confirmRejectResultSchema = z.object({
@@ -57,9 +66,10 @@ export async function fetchLoanRepaymentPreview(
 
 export async function fetchDepositPreview(
   groupId: string,
+  includeLoan = false,
 ): Promise<DepositPreviewResponse> {
   const raw = (await apiClient.get(
-    `/groups/${encodeURIComponent(groupId)}/finance/deposit-preview`,
+    `/groups/${encodeURIComponent(groupId)}/finance/deposit-preview${includeLoan ? "?includeLoan=true" : ""}`,
   )) as JsonValue;
   const parsed = depositPreviewResponseSchema.safeParse(raw);
   if (!parsed.success) {
@@ -92,6 +102,21 @@ export async function postDeposit(
   const parsed = createDepositResultSchema.safeParse(raw);
   if (!parsed.success) {
     throw new ApiError(500, "Invalid deposit response from server", raw);
+  }
+  return parsed.data;
+}
+
+/** Status of one deposit; the server re-checks a pending MoMo payment with MTN. */
+export async function fetchDepositStatus(
+  groupId: string,
+  depositId: string,
+): Promise<DepositStatusResult> {
+  const raw = (await apiClient.get(
+    `/groups/${encodeURIComponent(groupId)}/finance/deposits/${encodeURIComponent(depositId)}`,
+  )) as JsonValue;
+  const parsed = depositStatusSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new ApiError(500, "Invalid deposit status from server", raw);
   }
   return parsed.data;
 }

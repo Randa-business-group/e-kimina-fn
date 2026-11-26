@@ -106,9 +106,9 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
     }
   };
 
-  const confirmDeleteGroup = async () => {
+  const confirmDeleteGroup = async (v: { confirmName: string; reason?: string }) => {
     try {
-      await deleteMutation.mutateAsync(groupId);
+      await deleteMutation.mutateAsync({ groupId, ...v });
       toast.success("Group deleted");
       router.push("/dashboard/groups");
       router.refresh();
@@ -336,8 +336,9 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
       <DeleteGroupDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        onConfirm={() => void confirmDeleteGroup()}
+        onConfirm={(v) => void confirmDeleteGroup(v)}
         isPending={deleteMutation.isPending}
+        groupName={g?.name ?? ""}
       />
 
       <MemberActionDialog

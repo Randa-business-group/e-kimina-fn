@@ -27,6 +27,8 @@ const groupSchema = z.object({
   maxMembers: z.number(),
   createdAt: z.string(),
   memberCount: z.number().optional(),
+  verificationStatus: z.enum(["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"]).optional(),
+  verificationRejectionReason: z.string().nullable().optional(),
 });
 
 const groupDetailSchema = groupSchema.extend({
@@ -162,8 +164,12 @@ export async function updateGroup(
   return parseGroup(raw);
 }
 
-export async function deleteGroup(groupId: string): Promise<void> {
-  await apiClient.delete(`/groups/${encodeURIComponent(groupId)}`);
+/** Soft delete; the server requires the exact group name as confirmation. */
+export async function deleteGroup(
+  groupId: string,
+  body: { confirmName: string; reason?: string },
+): Promise<void> {
+  await apiClient.delete(`/groups/${encodeURIComponent(groupId)}`, body);
 }
 
 export async function removeGroupMember(

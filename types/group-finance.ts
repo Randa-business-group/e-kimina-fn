@@ -9,6 +9,19 @@ export type DepositPreviewResponse = {
   fine?: number;
   installment?: number;
   total?: number;
+  /** Nothing is owed: the amount pays the next period in advance. */
+  isAdvancePayment?: boolean;
+  /** The member's open loan (can be paid together with the contribution). */
+  loan?: {
+    memberLoanId: string;
+    status: string;
+    dueDate: string;
+    isOverdue: boolean;
+    penalty: number;
+    balance: number;
+    outstanding: number;
+    included: boolean;
+  } | null;
 };
 
 export type LoanRequestPreviewResponse = {
@@ -22,6 +35,12 @@ export type LoanRequestPreviewResponse = {
   interestRate?: number;
   repaymentPeriodDays?: number;
   allowExceedContribution?: boolean;
+  /** Reasons the member cannot apply right now (arrears, open loan, no group cash…). */
+  blockers?: string[];
+  groupCashAvailable?: number;
+  stakeCap?: number | null;
+  lateContributions?: number;
+  openFines?: number;
 };
 
 export type CreateDepositBody = {
@@ -32,6 +51,10 @@ export type CreateDepositBody = {
   proofImageUrl?: string;
   /** When repaying a disbursed member loan, pass its id (same payment methods as a deposit). */
   memberLoanId?: string;
+  /** Pay contributions/fines and the open loan in one deposit. */
+  includeLoanRepayment?: boolean;
+  /** Client-generated key so a retried submit never creates a second payment. */
+  idempotencyKey?: string;
 };
 
 export type PendingManualDeposit = {
@@ -42,6 +65,9 @@ export type PendingManualDeposit = {
   proofImageUrl: string;
   createdAt: string;
   member: { id: string; fullName: string; email: string };
+  /** The reviewer's own payment — another leader must review it. */
+  isOwn?: boolean;
+  canReview?: boolean;
 };
 
 /** Current user’s own manual transfer(s) awaiting group admin (read-only in UI). */
@@ -58,7 +84,16 @@ export type CreateDepositResult = {
   message: string;
   amount: number;
   currency: string;
+  /** PENDING (MoMo prompt sent) · PENDING_VERIFICATION · CONFIRMED · FAILED */
   status: string;
+  failureReason?: string | null;
+};
+
+export type DepositStatusResult = CreateDepositResult & {
+  paymentMethod: DepositPaymentMethodApi;
+  contributionPortion: number;
+  finePortion: number;
+  installmentPortion: number;
 };
 
 export type CreateLoanApplicationResult = {

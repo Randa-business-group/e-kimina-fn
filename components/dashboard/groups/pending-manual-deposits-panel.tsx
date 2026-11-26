@@ -102,11 +102,11 @@ export function PendingManualDepositsPanel({ groupId }: PendingManualDepositsPan
 
   return (
     <section className="rounded-(--radius) border border-border bg-bg px-4 py-4 sm:px-5">
-      <h3 className="text-base font-semibold text-text">Manual payments to verify (group admin)</h3>
+      <h3 className="text-base font-semibold text-text">Manual payments to verify</h3>
       <p className="mt-1 text-sm text-text-muted">
-        When a member pays by bank transfer, group admins are notified by email. Open each proof, then
-        confirm or reject. MTN MoMo payments are confirmed automatically when recorded and do not appear
-        here. Reject can include an optional message to the member.
+        When a member pays by bank transfer, the group admin and treasurer are notified. Open each proof,
+        then confirm or reject; nobody can review their own payment. MTN MoMo payments are confirmed by
+        MTN and do not appear here. Reject can include an optional message to the member.
       </p>
       <ul className="mt-3 space-y-2">
         {list.map((d) => (
@@ -131,27 +131,35 @@ export function PendingManualDepositsPanel({ groupId }: PendingManualDepositsPan
               >
                 View proof
               </Button>
-              <Button
-                type="button"
-                size="sm"
-                className="bg-primary"
-                onClick={() => void onConfirm(d)}
-                disabled={confirmM.isPending}
-              >
-                {confirmM.isPending ? <Loader2 className="size-4 animate-spin" /> : "Confirm"}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="destructive"
-                onClick={() => {
-                  setReason("");
-                  setRejectOpen(d);
-                }}
-                disabled={rejectM.isPending}
-              >
-                Reject
-              </Button>
+              {d.isOwn ? (
+                <span className="self-center text-xs text-text-muted">
+                  Your payment — another leader must review it
+                </span>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="bg-primary"
+                    onClick={() => void onConfirm(d)}
+                    disabled={confirmM.isPending}
+                  >
+                    {confirmM.isPending ? <Loader2 className="size-4 animate-spin" /> : "Confirm"}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => {
+                      setReason("");
+                      setRejectOpen(d);
+                    }}
+                    disabled={rejectM.isPending}
+                  >
+                    Reject
+                  </Button>
+                </>
+              )}
             </div>
           </li>
         ))}
