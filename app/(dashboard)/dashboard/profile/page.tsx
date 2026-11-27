@@ -1,10 +1,5 @@
-import { DashboardStub } from "@/components/dashboard/dashboard-stub";
+import { ProfilePage } from "@/components/profile/profile-page";
 
-export default function ProfilePage() {
-  return (
-    <DashboardStub
-      title="My profile"
-      description="View and edit your profile."
-    />
-  );
+export default function Page() {
+  return <ProfilePage />;
 }

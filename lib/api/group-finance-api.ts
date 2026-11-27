@@ -124,10 +124,12 @@ export async function fetchDepositStatus(
 export async function postLoanApplication(
   groupId: string,
   requestedAmount: number,
+  idempotencyKey?: string,
 ): Promise<CreateLoanApplicationResult> {
   const raw = (await apiClient.post(
     `/groups/${encodeURIComponent(groupId)}/finance/loan-applications`,
-    { requestedAmount } as unknown as JsonObject,
+    // The key makes a double click or a retry return the same request (msfts §10).
+    { requestedAmount, ...(idempotencyKey ? { idempotencyKey } : {}) } as unknown as JsonObject,
   )) as JsonValue;
   const parsed = createLoanResultSchema.safeParse(raw);
   if (!parsed.success) {

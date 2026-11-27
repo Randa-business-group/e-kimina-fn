@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n/i18n-context";
 import Link from "next/link";
 import { ChevronUp, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ type UserMenuProps = {
 
 export function UserMenu({ collapsed, onNavigate }: UserMenuProps) {
   const { user, logout } = useAuth();
+  const t = useT();
 
   if (!user) return null;
 
@@ -82,7 +84,7 @@ export function UserMenu({ collapsed, onNavigate }: UserMenuProps) {
             onClick={() => onNavigate?.()}
           >
             <User className="size-4" />
-            My profile
+            {t("shell.myProfile")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -90,11 +92,11 @@ export function UserMenu({ collapsed, onNavigate }: UserMenuProps) {
           className="cursor-pointer text-[var(--color-error)] focus:bg-[var(--color-primary-soft)] focus:text-[var(--color-error)]"
           onSelect={() => {
             toastSignedOut();
-            logout();
+            void logout();
           }}
         >
           <LogOut className="size-4" />
-          Sign out
+          {t("shell.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

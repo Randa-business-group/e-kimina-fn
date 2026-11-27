@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CreditCard, Loader2, TriangleAlert, Wallet } from "lucide-react";
+import { CreditCard, TriangleAlert, Wallet } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,

@@ -24,7 +24,9 @@ import type {
   ResendVerificationRequest,
   VerifyEmailRequest,
   VerifyResetOtpRequest,
+  LoginResult,
 } from "@/types/auth";
+import { isChallenge } from "@/types/auth";
 import { authKeys } from "./auth-keys";
 import { useHasStoredToken } from "./use-token-state";
 
@@ -52,7 +54,8 @@ export function useLoginMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: LoginRequest) => login(body),
-    onSuccess: (data: AuthResponse) => {
+    onSuccess: (data: LoginResult) => {
+      if (isChallenge(data)) return; // second step first
       tokenStorage.set(data.accessToken);
       queryClient.setQueryData(authKeys.profile(), data.user);
     },

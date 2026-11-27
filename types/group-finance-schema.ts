@@ -15,10 +15,16 @@ export const depositPreviewResponseSchema: z.ZodType<DepositPreviewResponse> = z
     currency: z.string().optional(),
     allowPartialPayments: z.boolean().optional(),
     contribution: z.number().optional(),
+    socialContribution: z.number().optional(),
     fine: z.number().optional(),
     installment: z.number().optional(),
     total: z.number().optional(),
     isAdvancePayment: z.boolean().optional(),
+    momoFee: z.number().optional(),
+    manualTransferAccount: z
+      .object({ name: z.string().nullable(), msisdn: z.string(), owner: z.enum(["GROUP", "PLATFORM"]) })
+      .nullable()
+      .optional(),
     loan: z
       .object({
         memberLoanId: z.string(),
@@ -28,6 +34,7 @@ export const depositPreviewResponseSchema: z.ZodType<DepositPreviewResponse> = z
         penalty: z.number(),
         balance: z.number(),
         outstanding: z.number(),
+        dueNow: z.number().optional(),
         included: z.boolean(),
       })
       .nullable()

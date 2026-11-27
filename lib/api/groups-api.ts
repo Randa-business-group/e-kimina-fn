@@ -108,7 +108,7 @@ export async function createGroup(body: {
     name: body.name,
     ...(body.description !== undefined ? { description: body.description } : {}),
     ...(body.isPublic !== undefined ? { isPublic: body.isPublic } : {}),
-    minMembers: body.maxMembers,
+    maxMembers: body.maxMembers,
     ...(body.treasurerEmail?.trim()
       ? { treasurerEmail: body.treasurerEmail.trim().toLowerCase() }
       : {}),

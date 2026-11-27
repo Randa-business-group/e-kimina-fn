@@ -137,6 +137,7 @@ export function DepositModal({
   const allowPartial = p?.allowPartialPayments === true;
   const contribution = p && "contribution" in p ? (p.contribution ?? 0) : 0;
   const fine = p && "fine" in p ? (p.fine ?? 0) : 0;
+  const social = p && "socialContribution" in p ? (p.socialContribution ?? 0) : 0;
   const installment = p && "installment" in p ? (p.installment ?? 0) : 0;
   const openLoan = !memberLoanId && p && "loan" in p ? (p.loan ?? null) : null;
   const isAdvance = !memberLoanId && p && "isAdvancePayment" in p ? Boolean(p.isAdvancePayment) : false;
@@ -293,9 +294,10 @@ export function DepositModal({
                     onChange={(e) => setIncludeLoan(e.target.checked)}
                   />
                   <span>
-                    <span className="font-medium text-text">Also repay my loan</span>
+                    <span className="font-medium text-text">Also pay my loan installment</span>
                     <span className="block text-xs text-text-muted">
-                      Outstanding {fmtCurrency(openLoan.outstanding, currency)}
+                      Due now {fmtCurrency(openLoan.dueNow ?? openLoan.outstanding, currency)} · outstanding{" "}
+                      {fmtCurrency(openLoan.outstanding, currency)}
                       {openLoan.penalty > 0 ? ` (incl. ${fmtCurrency(openLoan.penalty, currency)} penalty)` : ""}
                       {openLoan.isOverdue ? " · overdue" : ""}
                     </span>
@@ -325,6 +327,14 @@ export function DepositModal({
                           {fmtCurrency(contribution, currency)}
                         </span>
                       </li>
+                      {social > 0 && (
+                        <li className="flex justify-between gap-3">
+                          <span className="text-text-muted">Social fund</span>
+                          <span className="font-medium text-text">
+                            {fmtCurrency(social, currency)}
+                          </span>
+                        </li>
+                      )}
                       <li className="flex justify-between gap-3">
                         <span className="text-text-muted">Fine</span>
                         <span className="font-semibold text-destructive">
@@ -413,6 +423,12 @@ export function DepositModal({
                     MTN sends a payment prompt to this number. Your balance updates once you approve it
                     with your MoMo PIN.
                   </p>
+                  {p && "momoFee" in p && p.momoFee ? (
+                    <p className="text-xs text-text-muted">
+                      A platform fee of about {fmtCurrency(p.momoFee, currency)} is added to the MoMo prompt. It does not
+                      go to the group.
+                    </p>
+                  ) : null}
                 </div>
               )}
 
@@ -429,6 +445,12 @@ export function DepositModal({
                       setProofFile(f);
                     }}
                   />
+                  {p && "manualTransferAccount" in p && p.manualTransferAccount ? (
+                    <p className="text-xs text-text">
+                      Send to {p.manualTransferAccount.name ? `${p.manualTransferAccount.name} · ` : ""}
+                      <span className="font-medium tabular-nums">{p.manualTransferAccount.msisdn}</span>
+                    </p>
+                  ) : null}
                   <p className="text-xs text-text-muted">
                     Upload a clear screenshot or photo of your transfer receipt. An admin will verify
                     it before your balance is updated.

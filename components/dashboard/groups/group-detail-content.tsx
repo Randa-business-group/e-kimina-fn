@@ -1,5 +1,9 @@
 "use client";
 
+import { AnnouncementsPanel } from "@/components/notifications/announcements-panel";
+import { CashBookTab, MatrixTab } from "@/components/reports/reports-page";
+import { FinesTab, GroupLoansTab, InvitationsTab, LeaveTab, MeetingsTab } from "@/components/dashboard/groups/group-extra-tabs";
+import { useT } from "@/lib/i18n/i18n-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -75,6 +79,9 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
 
   const g = groupQuery.data;
   const isAdmin = g?.isGroupAdmin ?? false;
+  const t = useT();
+  const isLeaderHere = isAdmin || g?.myRole === ROLE.TREASURER;
+  const isMemberHere = Boolean(g?.myRole);
   /** Only group admins get the settings tab; treasurers use other flows or API. */
   const canEditLoanConfig = Boolean(g && g.isVerified && g.isGroupAdmin);
   // ✅ CHANGED: show settings tab for any admin, not just when loan config is editable
@@ -270,11 +277,19 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="members">
-        <TabsList className="border border-border bg-secondary">
-          <TabsTrigger value="members">Members</TabsTrigger>
+        <TabsList className="h-auto flex-wrap border border-border bg-secondary">
+          <TabsTrigger value="members">{t("group.tab.members")}</TabsTrigger>
+          <TabsTrigger value="announcements">{t("group.tab.announcements")}</TabsTrigger>
+          {isLeaderHere ? <TabsTrigger value="contributions">{t("group.tab.contributions")}</TabsTrigger> : null}
+          {isLeaderHere ? <TabsTrigger value="ledger">{t("group.tab.ledger")}</TabsTrigger> : null}
+          {isMemberHere ? <TabsTrigger value="loans">{t("group.tab.loans")}</TabsTrigger> : null}
+          {isMemberHere ? <TabsTrigger value="fines">{t("group.tab.fines")}</TabsTrigger> : null}
+          {isMemberHere ? <TabsTrigger value="meetings">{t("group.tab.meetings")}</TabsTrigger> : null}
+          {isAdmin ? <TabsTrigger value="invitations">{t("group.tab.invitations")}</TabsTrigger> : null}
+          {isMemberHere ? <TabsTrigger value="leave">{t("group.tab.leave")}</TabsTrigger> : null}
           {/* ✅ CHANGED: tab label is now "Settings", condition uses showSettingsTab */}
           {showSettingsTab && (
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="settings">{t("group.tab.settings")}</TabsTrigger>
           )}
         </TabsList>
 
@@ -300,6 +315,42 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
             }}
             onReactivate={(m) => void onReactivate(m)}
           />
+        </TabsContent>
+
+        {isLeaderHere ? (
+          <TabsContent value="contributions" className="pt-4">
+            <MatrixTab groupId={groupId} range={{}} />
+          </TabsContent>
+        ) : null}
+        {isLeaderHere ? (
+          <TabsContent value="ledger" className="pt-4">
+            <CashBookTab groupId={groupId} range={{}} />
+          </TabsContent>
+        ) : null}
+        {isMemberHere ? (
+          <>
+            <TabsContent value="loans" className="pt-4">
+              <GroupLoansTab groupId={groupId} isLeader={isLeaderHere} />
+            </TabsContent>
+            <TabsContent value="fines" className="pt-4">
+              <FinesTab groupId={groupId} isLeader={isLeaderHere} myUserId={user?.id} />
+            </TabsContent>
+            <TabsContent value="meetings" className="pt-4">
+              <MeetingsTab groupId={groupId} isLeader={isLeaderHere} />
+            </TabsContent>
+            <TabsContent value="leave" className="pt-4">
+              <LeaveTab groupId={groupId} isLeader={isLeaderHere} myUserId={user?.id} />
+            </TabsContent>
+          </>
+        ) : null}
+        {isAdmin ? (
+          <TabsContent value="invitations" className="pt-4">
+            <InvitationsTab groupId={groupId} />
+          </TabsContent>
+        ) : null}
+
+        <TabsContent value="announcements" className="pt-4">
+          <AnnouncementsPanel groupId={groupId} canPost={isAdmin} />
         </TabsContent>
 
         {/* ✅ CHANGED: renders SettingsTab (holds both Contributions + Loans sections) */}

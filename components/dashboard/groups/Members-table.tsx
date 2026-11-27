@@ -7,7 +7,6 @@ import { ROLE } from "@/types/enum";
 import type { GroupMemberRow } from "@/types/group";
 import { cn } from "@/utils/cn";
 
-type MemberAction = "remove" | "suspend";
 
 type MembersTableProps = {
   members: GroupMemberRow[];

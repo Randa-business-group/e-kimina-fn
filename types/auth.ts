@@ -15,6 +15,10 @@ export interface UserResponse {
   phoneNumber: string | null;
   image: string | null;
   emailVerified: boolean;
+  /** Set once the phone number was confirmed with an SMS code. */
+  phoneVerifiedAt?: string | null;
+  /** Two-step verification method, when on. */
+  twoFactorMethod?: "TOTP" | "SMS" | null;
   platformRole: Role;
   groupMemberships: GroupMembership[];
   createdAt: string;
@@ -30,6 +34,19 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
+
+/** Password was right; a second step is needed (msfts §8). */
+export interface TwoFactorChallenge {
+  twoFactorRequired: true;
+  method: "TOTP" | "SMS";
+  challengeToken: string;
+  phoneHint: string | null;
+}
+
+export type LoginResult = AuthResponse | TwoFactorChallenge;
+
+export const isChallenge = (r: LoginResult): r is TwoFactorChallenge =>
+  (r as TwoFactorChallenge).twoFactorRequired === true;
 
 export interface RegisterRequest {
   email: string;

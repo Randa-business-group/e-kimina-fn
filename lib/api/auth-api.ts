@@ -4,6 +4,7 @@ import type {
   CompletePasswordResetRequest,
   ForgotPasswordRequest,
   LoginRequest,
+  LoginResult,
   RegisterRequest,
   RegisterResult,
   ResendVerificationRequest,
@@ -13,6 +14,7 @@ import type {
 } from "@/types/auth";
 import {
   authResponseSchema,
+  loginResultSchema,
   completePasswordResetRequestSchema,
   loginRequestSchema,
   registerRequestSchema,
@@ -52,7 +54,7 @@ function registerBody(payload: RegisterRequest): JsonObject {
   return body;
 }
 
-export async function login(body: LoginRequest): Promise<AuthResponse> {
+export async function login(body: LoginRequest): Promise<LoginResult> {
   const payload = loginRequestSchema.parse(body);
   const requestBody: JsonObject = {
     email: payload.email,
@@ -62,7 +64,47 @@ export async function login(body: LoginRequest): Promise<AuthResponse> {
     await apiClient.post(API_AUTH_PATHS.login, requestBody),
     "login",
   );
+  return loginResultSchema.parse(raw);
+}
+
+export async function loginWithPhonePassword(phone: string, password: string): Promise<LoginResult> {
+  const raw = ensureJsonObject(await apiClient.post(API_AUTH_PATHS.login, { phone, password }), "login");
+  return loginResultSchema.parse(raw);
+}
+
+export async function requestPhoneCode(phone: string): Promise<{ message: string }> {
+  const raw = ensureJsonObject(await apiClient.post(API_AUTH_PATHS.phoneRequestCode, { phone }), "phone");
+  return z.object({ message: z.string() }).parse(raw);
+}
+
+export async function verifyPhoneCode(phone: string, code: string): Promise<LoginResult> {
+  const raw = ensureJsonObject(await apiClient.post(API_AUTH_PATHS.phoneVerify, { phone, code }), "phone");
+  return loginResultSchema.parse(raw);
+}
+
+export async function verifyTwoFactor(body: {
+  challengeToken: string;
+  code?: string;
+  recoveryCode?: string;
+}): Promise<AuthResponse> {
+  const payload: JsonObject = { challengeToken: body.challengeToken };
+  if (body.code) payload.code = body.code;
+  if (body.recoveryCode) payload.recoveryCode = body.recoveryCode;
+  const raw = ensureJsonObject(await apiClient.post(API_AUTH_PATHS.twoFactorVerify, payload), "2fa");
   return authResponseSchema.parse(raw);
+}
+
+export async function resendTwoFactor(challengeToken: string): Promise<void> {
+  await apiClient.post(API_AUTH_PATHS.twoFactorResend, { challengeToken });
+}
+
+/** Revokes this device's refresh cookie on the server. */
+export async function logoutRequest(): Promise<void> {
+  await apiClient.post(API_AUTH_PATHS.logout, {}).catch(() => undefined);
+}
+
+export async function logoutEverywhere(): Promise<void> {
+  await apiClient.post(API_AUTH_PATHS.logoutAll, {});
 }
 
 export async function register(body: RegisterRequest): Promise<RegisterResult> {

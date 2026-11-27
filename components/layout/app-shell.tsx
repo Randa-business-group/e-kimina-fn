@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { GroupRemovalBanners } from "@/components/dashboard/group-removal-banners";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { ImpersonationBanner } from "@/components/layout/impersonation-banner";
+import { RouteGuard } from "@/components/layout/route-guard";
 import { DashboardTopBar } from "@/components/layout/dashboard-top-bar";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useClientMounted } from "@/lib/auth/use-client-mounted";
@@ -78,10 +80,11 @@ export function AppShell({ children }: AppShellProps) {
         onMobileClose={() => setMobileNavOpen(false)}
       />
       <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+        <ImpersonationBanner />
         <DashboardTopBar onOpenMobileNav={() => setMobileNavOpen(true)} />
         <main className="min-h-0 flex-1 overflow-auto overscroll-y-contain p-page">
           <GroupRemovalBanners />
-          {children}
+          <RouteGuard>{children}</RouteGuard>
         </main>
       </div>
     </div>

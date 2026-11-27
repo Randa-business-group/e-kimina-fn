@@ -10,6 +10,8 @@ export interface OTPInputProps extends Omit<React.InputHTMLAttributes<HTMLInputE
   disabled?: boolean;
   /** If true, only 0–9 (e.g. email / SMS codes). Default allows A–Z and 0–9. */
   numericOnly?: boolean;
+  /** Extra classes for each digit box (filled boxes carry `data-filled`). */
+  cellClassName?: string;
 }
 
 const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
@@ -21,6 +23,7 @@ const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
       disabled = false,
       numericOnly = false,
       className,
+      cellClassName,
       autoComplete,
       ...props
     },
@@ -144,11 +147,13 @@ const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
             onKeyDown={(e) => handleKeyDown(index, e)}
             onPaste={handlePaste}
             disabled={disabled}
+            data-filled={digit ? '' : undefined}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background text-center text-base font-semibold text-foreground transition-colors sm:h-12 sm:w-12 sm:text-lg',
               'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
               'disabled:cursor-not-allowed disabled:opacity-50',
-              digit && 'border-primary'
+              digit && 'border-primary',
+              cellClassName
             )}
             {...props}
           />

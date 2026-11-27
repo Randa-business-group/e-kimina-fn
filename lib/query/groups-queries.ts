@@ -312,10 +312,12 @@ export function useCreateLoanApplicationMutation() {
     mutationFn: ({
       groupId,
       requestedAmount,
+      idempotencyKey,
     }: {
       groupId: string;
       requestedAmount: number;
-    }) => postLoanApplication(groupId, requestedAmount),
+      idempotencyKey?: string;
+    }) => postLoanApplication(groupId, requestedAmount, idempotencyKey),
     onSuccess: async (_, v) => {
       await qc.invalidateQueries({
         queryKey: groupKeys.financeLoanPreview(v.groupId),

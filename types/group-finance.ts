@@ -6,11 +6,17 @@ export type DepositPreviewResponse = {
   currency?: string;
   allowPartialPayments?: boolean;
   contribution?: number;
+  /** Social fund (ingoboka) periods due; included in total. */
+  socialContribution?: number;
   fine?: number;
   installment?: number;
   total?: number;
   /** Nothing is owed: the amount pays the next period in advance. */
   isAdvancePayment?: boolean;
+  /** Platform fee added on top when paying the total by MTN MoMo. */
+  momoFee?: number;
+  /** Where to send a manual transfer (the group's account, else the platform's). */
+  manualTransferAccount?: { name: string | null; msisdn: string; owner: "GROUP" | "PLATFORM" } | null;
   /** The member's open loan (can be paid together with the contribution). */
   loan?: {
     memberLoanId: string;
@@ -20,6 +26,8 @@ export type DepositPreviewResponse = {
     penalty: number;
     balance: number;
     outstanding: number;
+    /** Penalty + overdue installments + next installment. */
+    dueNow?: number;
     included: boolean;
   } | null;
 };

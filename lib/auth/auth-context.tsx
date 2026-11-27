@@ -5,12 +5,16 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
-import { tokenStorage } from "@/lib/api/api-client";
+import { refreshSession, setSessionHint, tokenStorage } from "@/lib/api/api-client";
+import { collectEffectiveRoles } from "@/lib/navigation/filter-navigation";
+import { encodeRoles } from "@/lib/navigation/route-access";
+import { logoutRequest } from "@/lib/api/auth-api";
 import type { UserResponse } from "@/types/auth";
-import { authKeys } from "./auth-keys";
 import { useProfileQuery } from "./auth-queries";
 import { useHasStoredToken } from "./use-token-state";
 
@@ -18,41 +22,62 @@ type AuthContextValue = {
   user: UserResponse | undefined;
   isLoading: boolean;
   isAuthenticated: boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+/** One silent refresh per page load: the refresh cookie gives back an access token. */
+let bootstrap: Promise<boolean> | null = null;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const hasToken = useHasStoredToken();
+  const [ready, setReady] = useState(false);
   const { data: user, isError } = useProfileQuery();
 
-  const logout = useCallback(() => {
+  useEffect(() => {
+    let alive = true;
+    bootstrap ??= tokenStorage.get() ? Promise.resolve(true) : refreshSession();
+    void bootstrap.finally(() => alive && setReady(true));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Keep the routing hint in step with the roles the signed-in person really has.
+  useEffect(() => {
+    if (user) setSessionHint(true, encodeRoles(collectEffectiveRoles(user)));
+  }, [user]);
+
+  useEffect(() => {
+    if (ready && !tokenStorage.get()) setSessionHint(false);
+  }, [ready]);
+
+  const logout = useCallback(async () => {
+    await logoutRequest();
     tokenStorage.remove();
-    queryClient.removeQueries({ queryKey: authKeys.profile() });
+    queryClient.clear();
   }, [queryClient]);
 
-  /** True while we have a token but profile not loaded yet (refresh / new tab). */
   const isLoading = useMemo(() => {
+    if (!ready) return true;
     if (!hasToken) return false;
     if (isError) return false;
     return user === undefined;
-  }, [hasToken, user, isError]);
+  }, [ready, hasToken, user, isError]);
 
-  const value = useMemo<AuthContextValue>(() => {
-    const authenticated = hasToken && !!user && !isError;
-    return {
+  const value = useMemo<AuthContextValue>(
+    () => ({
       user,
       isLoading,
-      isAuthenticated: authenticated,
+      isAuthenticated: ready && hasToken && !!user && !isError,
       logout,
-    };
-  }, [hasToken, user, isLoading, isError, logout]);
-
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    }),
+    [ready, hasToken, user, isLoading, isError, logout],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {
