@@ -45,7 +45,7 @@ export function GroupAdminMemberLoanCard({ loan }: Props) {
           </p>
         </div>
         <span
-          className={cn("rounded-full px-2.5 py-1 text-xs font-medium", statusClass(loan))}
+          className={cn("rounded-sm px-2.5 py-1 text-xs font-medium", statusClass(loan))}
         >
           {loan.isOverdue
             ? "Overdue"

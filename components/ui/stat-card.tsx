@@ -21,7 +21,7 @@ function StatCard({ title, value, description, icon: Icon, isLoading, trend, cla
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border bg-card p-6",
+        "group relative overflow-hidden rounded-lg border bg-card p-5",
         "transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-[2px]",
         className
       )}
@@ -46,14 +46,14 @@ function StatCard({ title, value, description, icon: Icon, isLoading, trend, cla
           {trend && (
             <div className={cn(
               "inline-flex items-center gap-1 text-xs font-medium",
-              trend.isPositive ? "text-emerald-600" : "text-red-500"
+              trend.isPositive ? "text-success" : "text-destructive"
             )}>
               <span>{trend.isPositive ? "+" : ""}{trend.value}%</span>
               <span className="text-muted-foreground">vs last month</span>
             </div>
           )}
         </div>
-        <div className="rounded-xl bg-primary/8 p-3 transition-colors duration-300 group-hover:bg-primary/12">
+        <div className="rounded-md bg-primary-soft p-3 transition-colors duration-300 group-hover:bg-primary/15">
           <Icon className="h-5 w-5 text-primary" />
         </div>
       </div>

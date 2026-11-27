@@ -60,10 +60,10 @@ export default function TransactionsPageContent() {
   const currency = filteredPayments[0]?.currency ?? "RWF";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text">
+          <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">
             Deposits
           </h1>
           <p className="mt-1 text-sm text-text-muted">
@@ -122,7 +122,7 @@ export default function TransactionsPageContent() {
       </div>
 
       <Tabs defaultValue="due">
-        <TabsList className="border border-border bg-secondary">
+        <TabsList>
           <TabsTrigger value="due" className="relative gap-2">
             Due payments
             {overdueCount > 0 && (
@@ -134,7 +134,7 @@ export default function TransactionsPageContent() {
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="due" className="pt-6">
+        <TabsContent value="due" className="pt-5">
           <UpcomingTab
             items={filteredPayments}
             isLoadingOverride={upcomingQuery.isLoading || groupsQuery.isLoading}
@@ -143,7 +143,7 @@ export default function TransactionsPageContent() {
           />
         </TabsContent>
 
-        <TabsContent value="history" className="pt-6">
+        <TabsContent value="history" className="pt-5">
           <HistoryTab selectedGroupId={selectedGroupId} />
         </TabsContent>
       </Tabs>
@@ -190,8 +190,8 @@ function SummaryCard({
           <span
             className={
               tone === "danger"
-                ? "rounded-full bg-destructive/10 p-1 text-destructive"
-                : "rounded-full bg-primary/10 p-1 text-primary"
+                ? "rounded-sm bg-destructive/10 p-1 text-destructive"
+                : "rounded-sm bg-primary/10 p-1 text-primary"
             }
           >
             {icon}

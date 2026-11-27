@@ -25,7 +25,7 @@ import type { UserResponse } from "@/types/auth";
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="space-y-4 rounded-(--radius) border border-border bg-bg p-5">
+    <section className="space-y-4 rounded-(--radius) border border-border bg-bg p-4">
       <h2 className="text-sm font-semibold text-text">{title}</h2>
       {children}
     </section>
@@ -248,10 +248,10 @@ function Privacy() {
 export function ProfilePage() {
   const { user } = useAuth();
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-3xl space-y-5 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-3xl space-y-4 px-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text">My profile</h1>
+          <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">My profile</h1>
           <p className="mt-1 text-sm text-text-muted">Your details, phone verification and your data.</p>
         </div>
         {user ? <ProfileForm key={user.updatedAt + (user.phoneNumber ?? "")} user={user} /> : <Loader2 className="size-4 animate-spin" />}

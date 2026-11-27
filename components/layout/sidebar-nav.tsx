@@ -50,22 +50,32 @@ export function SidebarNav({
           <li key={item.id}>
             <Link
               href={item.href}
+              aria-current={active ? "page" : undefined}
               title={collapsed ? t(`nav.${item.id}`, item.label) : undefined}
               onClick={() => onNavigate?.()}
               className={cn(
-                "flex touch-manipulation items-center gap-3 rounded-radius-sm px-3 py-2.5 text-sm font-medium transition-[background,color] duration-transition",
+                "flex min-h-10 touch-manipulation items-center gap-3.5 rounded-md px-3 py-2 text-[15px] transition-[background,color] duration-200",
                 active
-                  ? "bg-primary-soft text-text"
-                  : "text-text-muted hover:bg-secondary-2 hover:text-text",
+                  ? "bg-primary font-medium text-primary-foreground shadow-[0_6px_14px_-8px_rgba(152,58,10,0.7)]"
+                  : "text-text hover:bg-secondary-2",
                 collapsed && "justify-center px-2",
               )}
             >
-              <Icon className="size-5 shrink-0 text-primary" aria-hidden />
+              <Icon
+                className={cn("size-5 shrink-0", active ? "text-primary-foreground" : "text-text")}
+                strokeWidth={1.7}
+                aria-hidden
+              />
               {!collapsed ? (
                 <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
                   <span className="truncate">{t(`nav.${item.id}`, item.label)}</span>
                   {item.badgeCount !== undefined && item.badgeCount > 0 ? (
-                    <span className="bg-text shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold text-bg">
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-sm px-1.5 py-0.5 text-[10px] font-semibold",
+                        active ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary text-primary-foreground",
+                      )}
+                    >
                       {item.badgeCount > 99 ? "99+" : String(item.badgeCount).padStart(2, "0")}
                     </span>
                   ) : null}

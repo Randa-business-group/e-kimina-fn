@@ -29,7 +29,7 @@ export function GroupPendingLoanApplicationsTable({
 
   if (pending.length === 0) {
     return (
-      <div className="py-12 text-center text-text-muted">
+      <div className="py-8 text-center text-text-muted">
         No applications waiting for a decision in this group.
       </div>
     );

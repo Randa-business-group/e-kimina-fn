@@ -67,7 +67,7 @@ export function SmsLog() {
               <tbody>
                 {d?.items.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-3 py-8 text-center text-text-muted">
+                    <td colSpan={5} className="px-3 py-6 text-center text-text-muted">
                       No SMS yet.
                     </td>
                   </tr>

@@ -38,12 +38,12 @@ export function NotificationBell() {
           type="button"
           variant="ghost"
           size="icon"
-          className="relative shrink-0 text-text-muted hover:bg-primary-soft hover:text-text"
+          className="relative size-10 shrink-0 rounded-md border border-border bg-card/60 text-text hover:bg-card"
           aria-label="Notifications"
         >
           <Bell className="size-5" />
           {unread > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-white">
+            <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-background bg-destructive px-1 text-[10px] font-bold leading-none text-white">
               {unread > 99 ? "99+" : unread}
             </span>
           )}
@@ -77,7 +77,7 @@ export function NotificationBell() {
         </DropdownMenuLabel>
         <div className="max-h-80 overflow-y-auto">
           {listQ.isLoading && (
-            <div className="flex items-center justify-center gap-2 py-8 text-text-muted">
+            <div className="flex items-center justify-center gap-2 py-6 text-text-muted">
               <Loader2 className="size-4 animate-spin" />
               Loading…
             </div>
@@ -88,7 +88,7 @@ export function NotificationBell() {
             </p>
           )}
           {listQ.isSuccess && listQ.data.length === 0 && (
-            <p className="px-3 py-8 text-center text-sm text-text-muted">No notifications yet.</p>
+            <p className="px-3 py-6 text-center text-sm text-text-muted">No notifications yet.</p>
           )}
           {listQ.isSuccess &&
             listQ.data.map((n) => (

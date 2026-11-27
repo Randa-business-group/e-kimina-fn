@@ -140,7 +140,7 @@ function RegisterPageContent() {
       <form onSubmit={onSubmit} className={authFormClass}>
         {errors.root?.message ? <AuthAlert>{errors.root.message}</AuthAlert> : null}
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4">
           <AuthField
             id="firstName"
             label="First name"

@@ -101,7 +101,7 @@ export function PendingManualDepositsPanel({ groupId }: PendingManualDepositsPan
   }
 
   return (
-    <section className="rounded-(--radius) border border-border bg-bg px-4 py-4 sm:px-5">
+    <section className="rounded-(--radius) border border-border bg-bg px-4 py-4 sm:px-4">
       <h3 className="text-base font-semibold text-text">Manual payments to verify</h3>
       <p className="mt-1 text-sm text-text-muted">
         When a member pays by bank transfer, the group admin and treasurer are notified. Open each proof,

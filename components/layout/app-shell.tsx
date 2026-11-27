@@ -7,6 +7,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { ImpersonationBanner } from "@/components/layout/impersonation-banner";
 import { RouteGuard } from "@/components/layout/route-guard";
 import { DashboardTopBar } from "@/components/layout/dashboard-top-bar";
+import { ContentArt } from "@/components/layout/shell-art";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useClientMounted } from "@/lib/auth/use-client-mounted";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
@@ -55,7 +56,7 @@ export function AppShell({ children }: AppShellProps) {
 
   if (!mounted || isLoading) {
     return (
-      <div className="bg-bg flex min-h-screen items-center justify-center text-text">
+      <div className="bg-background flex min-h-screen items-center justify-center text-text">
         <p className="text-sm text-text-muted">Loading…</p>
       </div>
     );
@@ -66,7 +67,7 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="bg-bg flex h-dvh min-h-0 overflow-hidden text-text">
+    <div className="bg-background flex h-dvh min-h-0 overflow-hidden text-text">
       {mobileNavOpen && !isDesktop ? (
         <button
           type="button"
@@ -79,10 +80,11 @@ export function AppShell({ children }: AppShellProps) {
         mobileOpen={mobileNavOpen}
         onMobileClose={() => setMobileNavOpen(false)}
       />
-      <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="relative isolate flex min-h-0 min-w-0 flex-1 flex-col">
+        <ContentArt />
         <ImpersonationBanner />
         <DashboardTopBar onOpenMobileNav={() => setMobileNavOpen(true)} />
-        <main className="min-h-0 flex-1 overflow-auto overscroll-y-contain p-page">
+        <main className="relative min-h-0 flex-1 overflow-auto overscroll-y-contain p-page">
           <GroupRemovalBanners />
           <RouteGuard>{children}</RouteGuard>
         </main>

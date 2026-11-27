@@ -83,7 +83,7 @@ export default function LoanManagementPage() {
 
   if (groupsQ.isLoading) {
     return (
-      <main className="flex min-h-[50vh] items-center justify-center bg-bg-muted/30">
+      <main className="flex min-h-[50vh] items-center justify-center">
         <Loader2 className="size-8 animate-spin text-text-muted" />
       </main>
     );
@@ -91,7 +91,7 @@ export default function LoanManagementPage() {
 
   if (groupsQ.isError || !groupsQ.data) {
     return (
-      <main className="min-h-screen bg-bg-muted/30 py-6">
+      <main className="pb-5 lg:pt-2">
         <div className="container mx-auto max-w-6xl px-4">
           <p className="text-destructive">
             {groupsQ.error?.message ?? "Could not load your groups."}
@@ -103,7 +103,7 @@ export default function LoanManagementPage() {
 
   if (groupsQ.data.length === 0) {
     return (
-      <main className="min-h-screen bg-bg-muted/30 py-6">
+      <main className="pb-5 lg:pt-2">
         <div className="container mx-auto max-w-6xl px-4 text-text-muted">
           Join a group first to use loan management.
         </div>
@@ -113,7 +113,7 @@ export default function LoanManagementPage() {
 
   if (manageableGroups.length === 0) {
     return (
-      <main className="min-h-screen bg-bg-muted/30 py-6">
+      <main className="pb-5 lg:pt-2">
         <div className="container mx-auto max-w-6xl px-4 text-text-muted">
           You are in groups, but only members with role <span className="font-medium text-text">GROUP_ADMIN</span> or <span className="font-medium text-text">TREASURER</span> can manage loans.
         </div>
@@ -122,11 +122,11 @@ export default function LoanManagementPage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-6xl space-y-6 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-6xl space-y-5 px-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">Loan management</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">Loan management</h1>
             <p className="mt-1 text-sm text-text-muted">
               Approve or reject applications (group admin and treasurer must both approve
               before a loan is disbursed) and track member loans, penalties, and overdue
@@ -293,7 +293,7 @@ function LoanManagementContent({
       </div>
 
       <Tabs defaultValue="pending" className="space-y-4">
-        <TabsList className="bg-bg border border-border">
+        <TabsList>
           <TabsTrigger value="pending" className="data-[state=active]:bg-warning/10">
             Pending ({pending.length})
           </TabsTrigger>
@@ -310,7 +310,7 @@ function LoanManagementContent({
 
         <TabsContent value="pending" className="space-y-4">
           {applicationsQ.isLoading || memberLoansQ.isLoading ? (
-            <div className="flex items-center justify-center py-12 text-text-muted">
+            <div className="flex items-center justify-center py-8 text-text-muted">
               <Loader2 className="me-2 size-5 animate-spin" />
               Loading…
             </div>
@@ -338,7 +338,7 @@ function LoanManagementContent({
 
         <TabsContent value="loans" className="space-y-4">
           {memberLoansQ.isLoading ? (
-            <div className="flex justify-center py-12 text-text-muted">
+            <div className="flex justify-center py-8 text-text-muted">
               <Loader2 className="size-6 animate-spin" />
             </div>
           ) : loans.length === 0 ? (
@@ -398,7 +398,7 @@ function LoanManagementContent({
                       <td className="px-3 py-2">
                         <span
                           className={cn(
-                            "rounded-full px-2 py-0.5 text-xs font-medium",
+                            "rounded-sm px-2 py-0.5 text-xs font-medium",
                             a.status === "APPROVED"
                               ? "bg-green-500/10 text-green-600"
                               : a.status === "REJECTED"

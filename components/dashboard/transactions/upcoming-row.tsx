@@ -74,7 +74,7 @@ export function UpcomingRow({ payment: p, onPay }: Props) {
     >
       <div
         className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-full",
+          "flex size-9 shrink-0 items-center justify-center rounded-md",
           iconBg,
         )}
       >

@@ -53,7 +53,7 @@ export function LoanSettingsForm({
 }: LoanSettingsFormProps) {
   return (
     <TooltipProvider>
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* ── Core Loan Terms ───────────────────────────────────── */}
         <Card className="border-border bg-bg">
           <CardHeader className="pb-3">
@@ -65,7 +65,7 @@ export function LoanSettingsForm({
               group.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-5 sm:grid-cols-2">
+          <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="ls-interest">
                 Interest Rate (% per period){" "}
@@ -121,7 +121,7 @@ export function LoanSettingsForm({
               amount.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <Label htmlFor="ls-exceed" className="cursor-pointer">
@@ -183,7 +183,7 @@ export function LoanSettingsForm({
               Configure partial payments and late-payment penalties.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <Label htmlFor="ls-partial" className="cursor-pointer">
@@ -204,7 +204,7 @@ export function LoanSettingsForm({
 
             <Separator className="bg-border" />
 
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="ls-penalty">
                   Penalty rate (% per period){" "}

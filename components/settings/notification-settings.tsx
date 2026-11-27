@@ -171,7 +171,7 @@ export function NotificationSettings() {
   const d = prefs.data;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <PushCard onChange={() => void qc.invalidateQueries({ queryKey: PREFS_KEY })} />
 
       <section className="rounded-(--radius) border border-border bg-bg">

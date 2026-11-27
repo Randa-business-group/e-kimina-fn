@@ -168,7 +168,7 @@ export default function LoginPage() {
 
         {challenge ? (
           <>
-            <p className="text-center text-sm text-bark">
+            <p className="text-center text-sm text-bark lg:text-[15.5px]">
               {useRecovery
                 ? "Enter one of the recovery codes you saved."
                 : challenge.method === "TOTP"
@@ -186,7 +186,7 @@ export default function LoginPage() {
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
-            <div className="flex flex-wrap justify-between gap-2 text-sm">
+            <div className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-1 text-sm lg:text-base">
               <button type="button" className={linkClass} onClick={() => setUseRecovery((v) => !v)}>
                 {useRecovery ? "Use a code instead" : "Use a recovery code"}
               </button>
@@ -226,13 +226,13 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               trailing={<PasswordToggle shown={showPassword} onToggle={() => setShowPassword((v) => !v)} />}
             />
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <label className="flex cursor-pointer items-center gap-2.5 text-ink-brown">
+            <div className="flex min-h-11 items-center justify-between gap-3 px-0.5 text-[14.5px] lg:text-[17px]">
+              <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-ink-brown lg:gap-3">
                 <input
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="size-4.5 cursor-pointer rounded-sm accent-clay"
+                  className="size-[19px] cursor-pointer rounded-sm accent-clay lg:size-[23px]"
                 />
                 Remember me
               </label>
@@ -279,7 +279,7 @@ export default function LoginPage() {
                 </button>
               </>
             ) : (
-              <p className="text-sm text-bark">We text a 6-digit code to the number on your account.</p>
+              <p className="text-sm text-bark lg:text-[15.5px]">We text a 6-digit code to the number on your account.</p>
             )}
           </>
         )}

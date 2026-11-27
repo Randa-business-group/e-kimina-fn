@@ -104,7 +104,7 @@ export function GroupsAdmin() {
               <tbody>
                 {groups.data?.items.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-3 py-8 text-center text-text-muted">
+                    <td colSpan={7} className="px-3 py-6 text-center text-text-muted">
                       No groups match.
                     </td>
                   </tr>
@@ -149,7 +149,7 @@ export function GroupsAdmin() {
       )}
 
       <Sheet open={Boolean(openId)} onOpenChange={(o) => !o && setOpenId(null)}>
-        <SheetContent className="w-full overflow-y-auto bg-bg p-6 sm:max-w-xl">{openId ? <GroupDetail id={openId} /> : null}</SheetContent>
+        <SheetContent className="w-full overflow-y-auto bg-bg p-5 sm:max-w-xl">{openId ? <GroupDetail id={openId} /> : null}</SheetContent>
       </Sheet>
     </PageShell>
   );
@@ -191,7 +191,7 @@ function GroupDetail({ id }: { id: string }) {
   const cur = g.contribution?.currency ?? "RWF";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <SheetHeader className="space-y-1 text-left">
         <SheetTitle className="text-xl text-text">{g.name}</SheetTitle>
         <div className="flex flex-wrap items-center gap-2 text-sm text-text-muted">

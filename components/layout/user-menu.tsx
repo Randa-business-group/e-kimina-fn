@@ -43,18 +43,18 @@ export function UserMenu({ collapsed, onNavigate }: UserMenuProps) {
           type="button"
           variant="ghost"
           className={cn(
-            "w-full justify-start gap-3 rounded-[var(--radius-sm)] px-2 py-2 text-left text-[var(--color-text)] hover:bg-[var(--color-primary-soft)]",
+            "h-auto w-full justify-start gap-3 rounded-md px-2 py-2 text-left text-text hover:bg-secondary-2",
             collapsed && "justify-center px-0",
           )}
           title={collapsed ? `${user.fullName} — ${user.email}` : undefined}
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-text)] text-sm font-semibold text-[var(--color-bg)]">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-[15px] font-semibold text-primary-foreground">
             {label}
           </span>
           {!collapsed ? (
             <>
               <span className="min-w-0 flex-1 text-left">
-                <span className="block truncate text-sm font-medium">{user.fullName}</span>
+                <span className="block truncate text-sm font-semibold">{user.fullName}</span>
                 <span className="block truncate text-xs text-[var(--color-text-muted)]">{user.email}</span>
               </span>
               <ChevronUp className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />

@@ -131,7 +131,7 @@ export default function ManualPaymentsPage() {
 
   if (groupsQ.isLoading) {
     return (
-      <main className="flex min-h-[50vh] items-center justify-center bg-bg-muted/30">
+      <main className="flex min-h-[50vh] items-center justify-center">
         <Loader2 className="size-8 animate-spin text-text-muted" />
       </main>
     );
@@ -139,7 +139,7 @@ export default function ManualPaymentsPage() {
 
   if (groupsQ.isError || !groupsQ.data) {
     return (
-      <main className="min-h-screen bg-bg-muted/30 py-6">
+      <main className="pb-5 lg:pt-2">
         <div className="container mx-auto max-w-5xl px-4">
           <p className="text-destructive">{groupsQ.error?.message ?? "Could not load your groups."}</p>
         </div>
@@ -149,7 +149,7 @@ export default function ManualPaymentsPage() {
 
   if (manageableGroups.length === 0) {
     return (
-      <main className="min-h-screen bg-bg-muted/30 py-6">
+      <main className="pb-5 lg:pt-2">
         <div className="container mx-auto max-w-5xl px-4 text-text-muted">
           You do not have manual-payment review access in any group. Only{" "}
           <span className="font-medium text-text">GROUP_ADMIN</span> and{" "}
@@ -160,11 +160,11 @@ export default function ManualPaymentsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-5xl space-y-6 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-5xl space-y-5 px-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">Manual payments</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">Manual payments</h1>
             <p className="mt-1 text-sm text-text-muted">
               Review manual transfer proofs by group. Group admins and treasurers can approve or reject, but never their own payment.
             </p>
@@ -208,7 +208,7 @@ export default function ManualPaymentsPage() {
             </div>
 
             {list.length === 0 ? (
-              <div className="rounded-(--radius) border border-border bg-bg p-8 text-center text-text-muted">
+              <div className="rounded-(--radius) border border-border bg-bg p-6 text-center text-text-muted">
                 No pending manual payments in this group.
               </div>
             ) : (

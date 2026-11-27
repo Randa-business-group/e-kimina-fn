@@ -57,15 +57,15 @@ export function UpcomingTab({
 
   if (isError) {
     return (
-      <p className="py-12 text-center text-sm text-destructive">
+      <p className="py-8 text-center text-sm text-destructive">
         Could not load upcoming payments. Please try again.
       </p>
     );
   }
 
   return (
-    <div className="flex gap-4 lg:gap-6">
-      <div className="min-w-0 flex-1 space-y-6">
+    <div className="flex gap-4 lg:gap-5">
+      <div className="min-w-0 flex-1 space-y-5">
         {pendingConfirmation.length > 0 && (
           <div className="space-y-2">
             <p className="px-1 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-500">
@@ -109,14 +109,14 @@ export function UpcomingTab({
         )}
 
         {payments.length === 0 && (
-          <p className="py-16 text-center text-sm text-text-muted">
+          <p className="py-10 text-center text-sm text-text-muted">
             You&apos;re all caught up — no upcoming payments.
           </p>
         )}
       </div>
 
       <aside className="hidden w-72 shrink-0 xl:block">
-        <div className="sticky top-6 space-y-3 rounded-(--radius) border border-border bg-bg p-5">
+        <div className="sticky top-6 space-y-3 rounded-(--radius) border border-border bg-bg p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
             Payment summary
           </p>

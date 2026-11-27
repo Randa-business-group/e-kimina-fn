@@ -103,7 +103,7 @@ export function ContributionSettingsForm({
 
   if (query.isError) {
     return (
-      <div className="rounded-(--radius) border border-border bg-secondary px-4 py-6 text-sm text-text">
+      <div className="rounded-(--radius) border border-border bg-secondary px-4 py-5 text-sm text-text">
         {query.error instanceof ApiError && query.error.status === 403
           ? "You cannot view contribution settings for this group."
           : (query.error?.message ?? "Could not load contribution settings.")}
@@ -191,7 +191,7 @@ function ContributionSettingsFormEditor({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <Card className="border-border bg-bg">
         <CardHeader className="pb-3">
           <CardTitle className="text-base text-text">Contribution Amount</CardTitle>
@@ -199,7 +199,7 @@ function ContributionSettingsFormEditor({
             Set the fixed amount each member must contribute per cycle.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-5 sm:grid-cols-2">
+        <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="cc-amount">
               Amount{" "}
@@ -253,8 +253,8 @@ function ContributionSettingsFormEditor({
             Define how often contributions are collected and when the first cycle begins.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-5">
-          <div className="grid gap-5 sm:grid-cols-2">
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="cc-interval">
                 Interval{" "}
@@ -357,7 +357,7 @@ function ContributionSettingsFormEditor({
             Control how members can pay and what happens when they pay late.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-0.5">
               <Label htmlFor="cc-partial" className="cursor-pointer">
@@ -378,7 +378,7 @@ function ContributionSettingsFormEditor({
 
           <Separator className="bg-border" />
 
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="cc-penalty">
                 Late penalty rate (% per period){" "}

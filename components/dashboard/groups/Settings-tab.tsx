@@ -44,7 +44,7 @@ export function SettingsTab({
   const [active, setActive] = useState<SettingsSection>("contribution");
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+    <div className="flex flex-col gap-5 lg:flex-row lg:gap-6">
       {/* ── Sidebar nav ─────────────────────────────────────────── */}
       <aside className="w-full shrink-0 lg:w-56 xl:w-64">
         {/* Mobile: horizontal scrollable pill nav */}

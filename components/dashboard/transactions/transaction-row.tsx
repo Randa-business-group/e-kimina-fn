@@ -18,27 +18,27 @@ type TransactionRowProps = {
 function TxIcon({ type }: { type: TransactionRecord["type"] }) {
   if (type === "CONTRIBUTION") {
     return (
-      <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <div className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
         <ArrowUpRight className="size-4" />
       </div>
     );
   }
   if (type === "LOAN_REPAYMENT") {
     return (
-      <div className="flex size-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
+      <div className="flex size-8 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
         <ArrowDownLeft className="size-4" />
       </div>
     );
   }
   if (type === "DEPOSIT") {
     return (
-      <div className="flex size-8 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-500">
+      <div className="flex size-8 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-500">
         <Landmark className="size-4" />
       </div>
     );
   }
   return (
-    <div className="flex size-8 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+    <div className="flex size-8 items-center justify-center rounded-md bg-destructive/10 text-destructive">
       <AlertTriangle className="size-4" />
     </div>
   );

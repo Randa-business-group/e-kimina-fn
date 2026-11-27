@@ -7,7 +7,7 @@ import { useT } from "@/lib/i18n/i18n-context";
 export default function OfflinePage() {
   const t = useT();
   return (
-    <main className="flex min-h-screen items-center justify-center bg-bg px-4">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-sm space-y-4 text-center">
         <WifiOff className="mx-auto size-10 text-text-muted" aria-hidden />
         <h1 className="text-xl font-semibold text-text">{t("offline.title")}</h1>

@@ -26,7 +26,7 @@ const TONE: Record<Tone, string> = {
 /** Status label with a colored dot (never color alone). */
 export function StatusPill({ tone, children }: { tone: Tone; children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border px-2 py-0.5 text-xs text-text">
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-border px-2 py-0.5 text-xs text-text">
       <span className="inline-block size-2 rounded-full" style={{ background: TONE[tone] }} aria-hidden />
       {children}
     </span>
@@ -50,11 +50,11 @@ export const VERIFICATION: Record<string, { label: string; tone: Tone }> = {
 
 export function PageShell({ title, description, actions, children }: { title: string; description: string; actions?: ReactNode; children: ReactNode }) {
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-6xl space-y-5 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-6xl space-y-4 px-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">{title}</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">{title}</h1>
             <p className="mt-1 text-sm text-text-muted">{description}</p>
           </div>
           {actions}
@@ -91,7 +91,7 @@ export function FilterChips<T extends string>({
           type="button"
           onClick={() => onChange(o.value)}
           className={cn(
-            "rounded-full border px-3 py-1 text-xs transition-colors",
+            "rounded-md border px-3 py-1 text-xs transition-colors",
             value === o.value ? "border-primary bg-primary/10 text-text" : "border-border text-text-muted hover:text-text",
           )}
         >
@@ -124,7 +124,7 @@ export function Pager({ page, totalPages, total, onPage, busy }: { page: number;
 
 export function Loading({ label = "Loading…" }: { label?: string }) {
   return (
-    <div className="flex items-center gap-2 py-10 text-sm text-text-muted">
+    <div className="flex items-center gap-2 py-8 text-sm text-text-muted">
       <Loader2 className="size-4 animate-spin" /> {label}
     </div>
   );

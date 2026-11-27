@@ -58,11 +58,11 @@ function Downloads({ path, pdf = true, csv = true }: { path: string; pdf?: boole
 function Loading({ q }: { q: { isLoading: boolean; isError: boolean; error: Error | null } }) {
   if (q.isLoading)
     return (
-      <div className="flex items-center gap-2 py-10 text-sm text-text-muted">
+      <div className="flex items-center gap-2 py-8 text-sm text-text-muted">
         <Loader2 className="size-4 animate-spin" /> Loading…
       </div>
     );
-  if (q.isError) return <p className="py-6 text-sm text-destructive">{q.error?.message ?? "Could not load the report."}</p>;
+  if (q.isError) return <p className="py-5 text-sm text-destructive">{q.error?.message ?? "Could not load the report."}</p>;
   return null;
 }
 
@@ -91,7 +91,7 @@ function Table({ head, rows, right = [] }: { head: string[]; rows: React.ReactNo
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={head.length} className="px-3 py-6 text-center text-text-muted">
+              <td colSpan={head.length} className="px-3 py-5 text-center text-text-muted">
                 Nothing to show for this period.
               </td>
             </tr>
@@ -492,11 +492,11 @@ export function ReportsPage() {
   const range: ReportRange = { from: from || undefined, to: to || undefined };
 
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-6xl space-y-5 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-6xl space-y-4 px-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">Reports</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">Reports</h1>
             <p className="mt-1 text-sm text-text-muted">Statements, contributions, loans and cash, with CSV and PDF downloads.</p>
           </div>
           <div className="flex flex-wrap items-end gap-3">

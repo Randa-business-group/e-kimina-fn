@@ -200,7 +200,7 @@ export function AuditLog({ groupId, platformGroupFilter }: { groupId: string | n
               <tbody>
                 {log.data?.items.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-3 py-8 text-center text-text-muted">
+                    <td colSpan={6} className="px-3 py-6 text-center text-text-muted">
                       Nothing recorded for these filters.
                     </td>
                   </tr>
