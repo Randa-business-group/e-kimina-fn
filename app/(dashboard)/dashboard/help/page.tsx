@@ -1,10 +1,5 @@
-import { DashboardStub } from "@/components/dashboard/dashboard-stub";
+import { HelpPage } from "@/components/help/help-page";
 
-export default function HelpPage() {
-  return (
-    <DashboardStub
-      title="Help"
-      description="Documentation and support."
-    />
-  );
+export default function Page() {
+  return <HelpPage />;
 }

@@ -8,6 +8,11 @@ import {
   HandCoins,
   TrendingUp,
   CardSimIcon,
+  Building2,
+  ScrollText,
+  SlidersHorizontal,
+  UserX,
+  LifeBuoy,
 } from "lucide-react";
 import { ROLE } from "@/types/enum";
 import type { NavigationConfig } from "@/types/navigation";
@@ -79,6 +84,34 @@ export const navigationConfig: NavigationConfig = [
         icon: Users,
         roles: [ROLE.SUPER_ADMIN],
       },
+      {
+        id: "admin-groups",
+        label: "All groups",
+        href: "/dashboard/admin/groups",
+        icon: Building2,
+        roles: [ROLE.SUPER_ADMIN],
+      },
+      {
+        id: "audit-log",
+        label: "Audit log",
+        href: "/dashboard/admin/audit",
+        icon: ScrollText,
+        roles: [ROLE.SUPER_ADMIN],
+      },
+      {
+        id: "platform",
+        label: "Platform",
+        href: "/dashboard/admin/platform",
+        icon: SlidersHorizontal,
+        roles: [ROLE.SUPER_ADMIN],
+      },
+      {
+        id: "deletions",
+        label: "Deletion requests",
+        href: "/dashboard/admin/deletions",
+        icon: UserX,
+        roles: [ROLE.SUPER_ADMIN],
+      },
     ],
   },
   {
@@ -90,6 +123,13 @@ export const navigationConfig: NavigationConfig = [
         label: "Settings",
         href: "/dashboard/settings",
         icon: Settings,
+        roles: [],
+      },
+      {
+        id: "help",
+        label: "Help",
+        href: "/dashboard/help",
+        icon: LifeBuoy,
         roles: [],
       },
     ],

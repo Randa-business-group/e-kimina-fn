@@ -20,7 +20,6 @@ import { ApiError } from "@/lib/query/query-client";
 import { cn } from "@/utils/cn";
 import { ROLE } from "@/types/enum";
 import type { Group } from "@/types/group";
-import type { ReactNode } from "react";
 
 type MainTab = "mine" | "discover";
 type MineSegment = "all" | "pending" | "verified";

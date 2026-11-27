@@ -17,6 +17,7 @@ function statusLabel(loan: MemberRow) {
   if (loan.status === "REPAID") return "Repaid";
   if (loan.status === "DEFAULTED") return "Defaulted";
   if (loan.status === "ACTIVE") return "Active";
+  if (loan.status === "WRITTEN_OFF") return "Written off";
   return loan.status;
 }
 
@@ -31,7 +32,9 @@ function statusBadgeClass(loan: MemberRow) {
 }
 
 export function UserMemberLoanCard({ loan, onPay }: Props) {
-  const canPay = loan.status === "ACTIVE" && loan.outstanding > 0.009;
+  // Defaulted and written-off loans can still be repaid (penalty first, then balance).
+  const canPay =
+    ["ACTIVE", "DEFAULTED", "WRITTEN_OFF"].includes(loan.status) && loan.outstanding > 0.009;
   const days = daysUntil(loan.dueDate);
   const dueText =
     loan.status === "REPAID"

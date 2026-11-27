@@ -6,6 +6,7 @@ import type {
   CreateDepositResult,
   CreateLoanApplicationResult,
   DepositPreviewResponse,
+  DepositStatusResult,
   LoanRequestPreviewResponse,
   MyPendingManualDeposit,
   PendingManualDeposit,
@@ -24,6 +25,14 @@ const createDepositResultSchema = z.object({
   amount: z.number(),
   currency: z.string(),
   status: z.string(),
+  failureReason: z.string().nullable().optional(),
+});
+
+const depositStatusSchema = createDepositResultSchema.extend({
+  paymentMethod: z.enum(["MTN_MOMO", "MANUAL_TRANSFER"]),
+  contributionPortion: z.number(),
+  finePortion: z.number(),
+  installmentPortion: z.number(),
 });
 
 const confirmRejectResultSchema = z.object({
@@ -57,9 +66,10 @@ export async function fetchLoanRepaymentPreview(
 
 export async function fetchDepositPreview(
   groupId: string,
+  includeLoan = false,
 ): Promise<DepositPreviewResponse> {
   const raw = (await apiClient.get(
-    `/groups/${encodeURIComponent(groupId)}/finance/deposit-preview`,
+    `/groups/${encodeURIComponent(groupId)}/finance/deposit-preview${includeLoan ? "?includeLoan=true" : ""}`,
   )) as JsonValue;
   const parsed = depositPreviewResponseSchema.safeParse(raw);
   if (!parsed.success) {
@@ -96,13 +106,30 @@ export async function postDeposit(
   return parsed.data;
 }
 
+/** Status of one deposit; the server re-checks a pending MoMo payment with MTN. */
+export async function fetchDepositStatus(
+  groupId: string,
+  depositId: string,
+): Promise<DepositStatusResult> {
+  const raw = (await apiClient.get(
+    `/groups/${encodeURIComponent(groupId)}/finance/deposits/${encodeURIComponent(depositId)}`,
+  )) as JsonValue;
+  const parsed = depositStatusSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new ApiError(500, "Invalid deposit status from server", raw);
+  }
+  return parsed.data;
+}
+
 export async function postLoanApplication(
   groupId: string,
   requestedAmount: number,
+  idempotencyKey?: string,
 ): Promise<CreateLoanApplicationResult> {
   const raw = (await apiClient.post(
     `/groups/${encodeURIComponent(groupId)}/finance/loan-applications`,
-    { requestedAmount } as unknown as JsonObject,
+    // The key makes a double click or a retry return the same request (msfts §10).
+    { requestedAmount, ...(idempotencyKey ? { idempotencyKey } : {}) } as unknown as JsonObject,
   )) as JsonValue;
   const parsed = createLoanResultSchema.safeParse(raw);
   if (!parsed.success) {

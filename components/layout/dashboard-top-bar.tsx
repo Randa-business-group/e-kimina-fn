@@ -1,6 +1,9 @@
 "use client";
 
-import { Menu, Moon, Sun } from "lucide-react";
+import { Languages, Menu, Moon, Sun } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useI18n } from "@/lib/i18n/i18n-context";
+import { LOCALES, LOCALE_NAMES } from "@/lib/i18n/dictionaries";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { useTheme } from "@/lib/providers/theme-provider";
@@ -12,6 +15,7 @@ type DashboardTopBarProps = {
 
 export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
   const { theme, toggleTheme, mounted } = useTheme();
+  const { t, locale, setLocale } = useI18n();
 
   return (
     <header
@@ -27,13 +31,34 @@ export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
         size="icon"
         className="shrink-0 text-text-muted hover:bg-primary-soft hover:text-text lg:hidden"
         onClick={onOpenMobileNav}
-        aria-label="Open navigation menu"
+        aria-label={t("shell.openMenu")}
       >
         <Menu className="size-5" />
       </Button>
       <span className="mr-auto min-w-0 truncate text-xs font-medium uppercase tracking-wider text-text-muted sm:text-sm">
-        Workspace
+        {t("shell.workspace")}
       </span>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="shrink-0 gap-1.5 px-2 text-text-muted hover:bg-primary-soft hover:text-text"
+            aria-label={t("shell.language")}
+          >
+            <Languages className="size-4" />
+            <span className="text-xs font-semibold uppercase">{locale}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {LOCALES.map((l) => (
+            <DropdownMenuItem key={l} onSelect={() => setLocale(l)} className={l === locale ? "font-semibold" : undefined}>
+              {LOCALE_NAMES[l]}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
       <NotificationBell />
       <Button
         type="button"
@@ -51,12 +76,12 @@ export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
         {mounted && theme === "dark" ? (
           <>
             <Sun className="size-4 shrink-0" />
-            <span className="hidden sm:inline">Light</span>
+            <span className="hidden sm:inline">{t("shell.light")}</span>
           </>
         ) : (
           <>
             <Moon className="size-4 shrink-0" />
-            <span className="hidden sm:inline">Dark</span>
+            <span className="hidden sm:inline">{t("shell.dark")}</span>
           </>
         )}
       </Button>

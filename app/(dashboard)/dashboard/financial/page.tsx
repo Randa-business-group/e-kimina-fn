@@ -1,10 +1,7 @@
-import { DashboardStub } from "@/components/dashboard/dashboard-stub";
+"use client";
+
+import { ReportsPage } from "@/components/reports/reports-page";
 
 export default function FinancialPage() {
-  return (
-    <DashboardStub
-      title="Reports"
-      description="Financial reports and analytics."
-    />
-  );
+  return <ReportsPage />;
 }

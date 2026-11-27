@@ -39,6 +39,8 @@ export function RequestLoanModal({
   const preview = useLoanRequestPreviewQuery(groupId, open && isVerified);
   const createLoan = useCreateLoanApplicationMutation();
   const [amount, setAmount] = useState("");
+  // One key per opening of the dialog: retries reuse it, a new request gets a new one.
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
 
   const p = preview.data;
   const ok = p?.configured && p.canRequest && p.maxAmount != null && p.maxAmount > 0;
@@ -63,8 +65,10 @@ export function RequestLoanModal({
       const res = await createLoan.mutateAsync({
         groupId,
         requestedAmount: requested,
+        idempotencyKey,
       });
       toast.success(res.message);
+      setIdempotencyKey(crypto.randomUUID());
       onOpenChange(false);
     } catch (e) {
       toast.error(

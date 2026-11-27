@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -24,8 +24,18 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "E-Kimina",
-  description: "Next.js 16 project with TypeScript and TanStack React Query",
+  title: { default: "E-kimina", template: "%s · E-kimina" },
+  description: "Save, borrow and keep your ikimina's books together.",
+  applicationName: "E-kimina",
+  appleWebApp: { capable: true, title: "E-kimina", statusBarStyle: "default" },
+  icons: { apple: "/icons/apple-touch-icon.png", icon: [{ url: "/icons/icon-192.png", sizes: "192x192" }] },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#005840",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

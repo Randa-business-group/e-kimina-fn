@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3033",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "start": "next start -p 3033",
+    "lint": "eslint",
+    "test": "node tests/run.mjs",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/playfair-display": "^0.4.2",

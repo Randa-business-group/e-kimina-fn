@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n/i18n-context";
 import Link from "next/link";
 import { useState } from "react";
 import { HelpCircle, PanelLeft, PanelLeftClose } from "lucide-react";
@@ -22,6 +23,7 @@ type AppSidebarProps = {
 
 export function AppSidebar({ mobileOpen, onMobileClose }: AppSidebarProps) {
   const { user } = useAuth();
+  const tr = useT();
   const clientMounted = useClientMounted();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [collapsed, setCollapsed] = useState(() => {
@@ -107,7 +109,7 @@ export function AppSidebar({ mobileOpen, onMobileClose }: AppSidebarProps) {
           <div key={section.id}>
             {!effectiveCollapsed ? (
               <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                {section.label}
+                {tr(`nav.section.${section.id}`) === `nav.section.${section.id}` ? section.label : tr(`nav.section.${section.id}`)}
               </p>
             ) : null}
             <SidebarNav

@@ -1,156 +1,304 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Eye, EyeOff } from "lucide-react";
-import { AuthSplitLayout } from "@/components/auth/auth-split-layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { getApiErrorMessage } from "@/lib/api/error-utils";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { KeyRound, Lock, Mail, MessageSquareText, Smartphone } from "lucide-react";
+import {
+  AuthAlert,
+  AuthButton,
+  AuthField as Field,
+  AuthFooter,
+  AuthShell,
+  PasswordToggle,
+  authFormClass,
+  authLinkClass as linkClass,
+} from "@/components/auth/auth-shell";
+import { tokenStorage } from "@/lib/api/api-client";
+import {
+  login,
+  loginWithPhonePassword,
+  requestPhoneCode,
+  resendTwoFactor,
+  verifyPhoneCode,
+  verifyTwoFactor,
+} from "@/lib/api/auth-api";
 import { toastAuthError, toastLoginSuccess } from "@/lib/auth-toast";
-import { useLoginMutation } from "@/lib/auth/auth-queries";
-import { ApiError } from "@/lib/query/query-client";
-import type { LoginRequest } from "@/types/auth";
-import { loginRequestSchema } from "@/types/auth-schema";
+import { authKeys } from "@/lib/auth/auth-keys";
+import { isChallenge, type AuthResponse, type LoginResult, type TwoFactorChallenge } from "@/types/auth";
+import { cn } from "@/utils/cn";
 
-const STEPS = [
-  { id: "sign-in", label: "Sign in to your account" },
-  { id: "workspace", label: "Access your workspace" },
-  { id: "journey", label: "Continue your journey" },
-] as const;
+type Mode = "password" | "phone";
+
+/** "Remember me" keeps the email or phone filled in on this device. */
+const REMEMBER_KEY = "ekimina.login.identifier";
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [mode, setMode] = useState<Mode>("password");
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const loginMutation = useLoginMutation();
+  const [remember, setRemember] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [code, setCode] = useState("");
+  const [challenge, setChallenge] = useState<TwoFactorChallenge | null>(null);
+  const [useRecovery, setUseRecovery] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<LoginRequest>({
-    resolver: zodResolver(loginRequestSchema),
-    defaultValues: { email: "", password: "" },
-  });
-
-  const onSubmit = form.handleSubmit(async (values) => {
+  useEffect(() => {
     try {
-      await loginMutation.mutateAsync(values);
-      toastLoginSuccess();
-      router.push("/dashboard");
-      router.refresh();
-    } catch (e) {
-      let message = "Something went wrong. Please try again.";
-      if (e instanceof ApiError || e instanceof Error) {
-        message = getApiErrorMessage(e);
+      const saved = localStorage.getItem(REMEMBER_KEY);
+      if (saved) {
+        setIdentifier(saved);
+        setRemember(true);
       }
-      toastAuthError(message);
-      form.setError("root", { message });
+    } catch {
+      /* storage unavailable — nothing to restore */
     }
-  });
+  }, []);
+
+  const saveRemembered = () => {
+    if (mode !== "password") return;
+    try {
+      if (remember && identifier.trim()) localStorage.setItem(REMEMBER_KEY, identifier.trim());
+      else localStorage.removeItem(REMEMBER_KEY);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const finish = (data: AuthResponse) => {
+    saveRemembered();
+    tokenStorage.set(data.accessToken);
+    queryClient.setQueryData(authKeys.profile(), data.user);
+    toastLoginSuccess();
+    const next = new URLSearchParams(window.location.search).get("next");
+    router.push(next && next.startsWith("/dashboard") && !next.startsWith("//") ? next : "/dashboard");
+    router.refresh();
+  };
+
+  const handle = (r: LoginResult) => {
+    if (isChallenge(r)) {
+      setChallenge(r);
+      setCode("");
+      return;
+    }
+    finish(r);
+  };
+
+  const run = async (fn: () => Promise<void>) => {
+    setBusy(true);
+    setError(null);
+    try {
+      await fn();
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Something went wrong. Please try again.";
+      setError(message);
+      toastAuthError(message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitPassword = () =>
+    run(async () => {
+      const id = identifier.trim();
+      if (!id || !password) throw new Error("Enter your email or phone and your password.");
+      handle(id.includes("@") ? await login({ email: id, password }) : await loginWithPhonePassword(id, password));
+    });
+
+  const sendCode = () =>
+    run(async () => {
+      if (!phone.trim()) throw new Error("Enter your phone number.");
+      await requestPhoneCode(phone.trim());
+      setCodeSent(true);
+    });
+
+  const submitPhoneCode = () => run(async () => handle(await verifyPhoneCode(phone.trim(), code.trim())));
+
+  const submitSecondStep = () =>
+    run(async () => {
+      if (!challenge) return;
+      finish(
+        await verifyTwoFactor(
+          useRecovery
+            ? { challengeToken: challenge.challengeToken, recoveryCode: code.trim() }
+            : { challengeToken: challenge.challengeToken, code: code.trim() },
+        ),
+      );
+    });
+
+  const switchMode = (m: Mode) => {
+    setMode(m);
+    setError(null);
+  };
+
+  const subtitle = challenge
+    ? "Two-step verification"
+    : mode === "phone"
+      ? "Sign in with an SMS code"
+      : "Sign in to your account";
+
+  const submitLabel = busy
+    ? "Please wait…"
+    : challenge
+      ? "Verify"
+      : mode === "phone" && !codeSent
+        ? "Send code"
+        : "Sign in";
 
   return (
-    <AuthSplitLayout
-      title={
-        <>
-          Welcome
-          <br />
-          Back
-        </>
-      }
-      subtitle=""
-      steps={STEPS}
-      activeStepIndex={0}
-    >
+    <AuthShell icon={Lock} title="Welcome Back" subtitle={subtitle} steps={3} step={challenge ? 1 : 0}>
       <form
-        onSubmit={onSubmit}
-        className="mx-auto flex w-full max-w-md flex-col gap-8"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (challenge) void submitSecondStep();
+          else if (mode === "password") void submitPassword();
+          else if (!codeSent) void sendCode();
+          else void submitPhoneCode();
+        }}
+        className={authFormClass}
       >
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight text-text">Sign In</h2>
-        </div>
+        {error ? <AuthAlert>{error}</AuthAlert> : null}
 
-        {form.formState.errors.root?.message ? (
-          <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {form.formState.errors.root.message}
-          </p>
-        ) : null}
-
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-text">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              placeholder="eg. johnfrans@gmail.com"
-              className="rounded-md border-border bg-secondary-2 px-4 py-3 text-text placeholder:text-text-muted transition duration-150 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
-              {...form.register("email")}
+        {challenge ? (
+          <>
+            <p className="text-center text-sm text-bark">
+              {useRecovery
+                ? "Enter one of the recovery codes you saved."
+                : challenge.method === "TOTP"
+                  ? "Enter the 6-digit code from your authenticator app."
+                  : `Enter the 6-digit code we texted to ${challenge.phoneHint ?? "your phone"}.`}
+            </p>
+            <Field
+              id="code"
+              label={useRecovery ? "Recovery code" : "Code"}
+              icon={<KeyRound />}
+              autoFocus
+              inputMode={useRecovery ? "text" : "numeric"}
+              autoComplete="one-time-code"
+              placeholder={useRecovery ? "xxxxx-xxxxx" : "6-digit code"}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
             />
-            {form.formState.errors.email ? (
-              <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>
-            ) : null}
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="password" className="text-sm font-medium text-text">
-                Password
-              </Label>
-              <Link
-                href="/forgot-password"
-                className="text-xs font-medium text-primary transition duration-150 hover:text-primary/80"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                className="rounded-md border-border bg-secondary-2 px-4 py-3 pr-10 text-text placeholder:text-text-muted transition duration-150 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
-                {...form.register("password")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition duration-150 hover:text-text"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            <div className="flex flex-wrap justify-between gap-2 text-sm">
+              <button type="button" className={linkClass} onClick={() => setUseRecovery((v) => !v)}>
+                {useRecovery ? "Use a code instead" : "Use a recovery code"}
+              </button>
+              {challenge.method === "SMS" && !useRecovery ? (
+                <button
+                  type="button"
+                  className={linkClass}
+                  onClick={() => void run(async () => resendTwoFactor(challenge.challengeToken))}
+                >
+                  Send a new code
+                </button>
+              ) : null}
+              <button type="button" className="text-bark transition hover:text-ink-brown" onClick={() => setChallenge(null)}>
+                Back
               </button>
             </div>
-            {form.formState.errors.password ? (
-              <p className="text-xs text-destructive">{form.formState.errors.password.message}</p>
-            ) : null}
-          </div>
-        </div>
+          </>
+        ) : mode === "password" ? (
+          <>
+            <Field
+              id="identifier"
+              label="Email or phone number"
+              icon={<Mail />}
+              autoComplete="username"
+              placeholder="Email or Phone Number"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+            />
+            <Field
+              id="password"
+              label="Password"
+              icon={<Lock />}
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              trailing={<PasswordToggle shown={showPassword} onToggle={() => setShowPassword((v) => !v)} />}
+            />
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <label className="flex cursor-pointer items-center gap-2.5 text-ink-brown">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="size-4.5 cursor-pointer rounded-sm accent-clay"
+                />
+                Remember me
+              </label>
+              <Link href="/forgot-password" className={linkClass}>
+                Forgot Password?
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <Field
+              id="phone"
+              label="Phone number"
+              icon={<Smartphone />}
+              type="tel"
+              autoComplete="tel"
+              placeholder="Phone number, e.g. 0788123456"
+              value={phone}
+              disabled={codeSent}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            {codeSent ? (
+              <>
+                <Field
+                  id="sms-code"
+                  label="Code from the SMS"
+                  icon={<MessageSquareText />}
+                  autoFocus
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  placeholder="6-digit code from the SMS"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className={cn(linkClass, "self-start text-sm")}
+                  onClick={() => {
+                    setCodeSent(false);
+                    setCode("");
+                  }}
+                >
+                  Use another number or send again
+                </button>
+              </>
+            ) : (
+              <p className="text-sm text-bark">We text a 6-digit code to the number on your account.</p>
+            )}
+          </>
+        )}
 
-        <Button
-          type="submit"
-          disabled={loginMutation.isPending}
-          className="w-full rounded-md bg-text py-3 text-sm font-semibold text-bg transition duration-150 hover:opacity-90 disabled:opacity-60"
-        >
-          {loginMutation.isPending ? "Signing in…" : "Sign In"}
-        </Button>
+        <AuthButton disabled={busy} busy={busy}>
+          {submitLabel}
+        </AuthButton>
 
-        <p className="text-center text-sm text-text-muted">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-semibold text-text transition duration-150 hover:opacity-90">
-            Create one
-          </Link>
-        </p>
-        <p className="text-center text-sm text-text-muted">
-          Need to verify your email?{" "}
-          <Link href="/verify-email" className="font-semibold text-text transition duration-150 hover:opacity-90">
-            Enter verification code
-          </Link>
-        </p>
+        {!challenge ? (
+          <AuthFooter>
+            <p>
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className={linkClass}>
+                Register
+              </Link>
+            </p>
+          </AuthFooter>
+        ) : null}
       </form>
-    </AuthSplitLayout>
+    </AuthShell>
   );
 }

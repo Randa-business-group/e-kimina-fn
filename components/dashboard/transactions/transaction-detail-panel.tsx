@@ -1,6 +1,10 @@
 "use client";
 
-import { Users, FileText, TrendingUp, Landmark } from "lucide-react";
+import { useState } from "react";
+import { Users, FileText, TrendingUp, Landmark, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { downloadReport, reportPaths } from "@/lib/api/reports-api";
 import { Separator } from "@/components/ui/separator";
 import type { TransactionRecord } from "@/types/transactions";
 import { formatCurrency, formatDate, formatTime, txTypeLabel } from "@/lib/transactions-utils";
@@ -9,6 +13,31 @@ import { cn } from "@/utils/cn";
 type Props = {
   transaction: TransactionRecord | null;
 };
+
+function ReceiptButton({ groupId, depositId }: { groupId: string; depositId: string }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true);
+        try {
+          await downloadReport(reportPaths.receipt(groupId, depositId), "pdf");
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "Could not download the receipt");
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+      Download receipt (PDF)
+    </Button>
+  );
+}
 
 export function TransactionDetailPanel({ transaction: tx }: Props) {
   if (!tx) {
@@ -76,6 +105,10 @@ export function TransactionDetailPanel({ transaction: tx }: Props) {
           value={txTypeLabel(tx.type)}
         />
       </div>
+
+      {tx.type === "DEPOSIT" || tx.type === "LOAN_REPAYMENT" ? (
+        <ReceiptButton groupId={tx.groupId} depositId={tx.id} />
+      ) : null}
     </div>
   );
 }

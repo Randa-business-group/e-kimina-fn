@@ -11,6 +11,8 @@ import { AuthProvider } from "@/lib/auth/auth-context";
 import { defaultQueryOptions } from "@/lib/query/query-client";
 import { ThemeProvider } from "@/lib/providers/theme-provider";
 import { AppToaster } from "@/components/ui/app-toaster";
+import { I18nProvider } from "@/lib/i18n/i18n-context";
+import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -45,10 +47,13 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>{children}</AuthProvider>
-        <AppToaster />
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <AppToaster />
+          <ServiceWorkerRegistrar />
+        </ThemeProvider>
+      </I18nProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

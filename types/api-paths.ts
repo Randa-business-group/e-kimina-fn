@@ -11,6 +11,13 @@ export const API_AUTH_PATHS = {
   resetPasswordVerifyOtp: "/auth/reset-password/verify-otp",
   resetPasswordComplete: "/auth/reset-password/complete",
   profile: "/auth/profile",
+  refresh: "/auth/refresh",
+  logout: "/auth/logout",
+  logoutAll: "/auth/logout-all",
+  phoneRequestCode: "/auth/phone/request-code",
+  phoneVerify: "/auth/phone/verify",
+  twoFactorVerify: "/auth/2fa/verify",
+  twoFactorResend: "/auth/2fa/resend",
   /** `GET ?token=` — public; resolves email for treasurer invitation registration. */
   treasurerInvitationPreview: "/auth/treasurer-invitation",
 } as const;

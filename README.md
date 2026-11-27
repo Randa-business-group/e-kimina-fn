@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# E-kimina — web app
 
-## Getting Started
+Next.js 16 (App Router) front end for E-kimina, a platform for Rwandan savings groups (*ibimina*):
+contributions, loans, fines, meetings, share-out and reports. It talks to the NestJS API in `../e-kimina-bn`.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install          # dependencies are pnpm-managed
+pnpm dev              # http://localhost:3033
+pnpm build && pnpm start
+pnpm lint
+pnpm test             # unit tests (Node test runner, no extra packages)
+node scripts/generate-icons.mjs   # regenerate the PWA icons
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Environment:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Default | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | `http://localhost:4033/api` | API base URL (must include `/api`) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The API must list this app's origin in `CORS_ORIGINS` (it sends credentialed requests).
 
-## Learn More
+## How it is put together
 
-To learn more about Next.js, take a look at the following resources:
+- **Sessions** — the access token lives in memory only; the API sets a rotating refresh token in an
+  httpOnly cookie. On load the app calls `/auth/refresh`; any 401 triggers one silent refresh
+  (`lib/api/api-client.ts`). Nothing sensitive is stored in `localStorage`.
+- **Route guards** — `proxy.ts` redirects before render using two non-sensitive hint cookies
+  (`ek_session`, `ek_roles`) set by the app; `components/layout/route-guard.tsx` shows a "no access"
+  screen on the client. Access rules live in `lib/navigation/route-access.ts`. The API remains the
+  real authority.
+- **Languages** — English, Kinyarwanda and French (`lib/i18n`). `useI18n()` gives `t()`, plus
+  locale-aware `money()`, `date()` and `dateTime()`. Missing keys fall back to English. The language
+  switch is in the top bar.
+- **PWA** — `app/manifest.ts`, icons in `public/icons`, and `public/sw.js` (offline page, cached
+  static assets, web push). API data is never cached. The worker registers in production builds.
+- **Data** — TanStack Query hooks in `lib/query`, API calls in `lib/api`, response types in `types`.
+- **Charts** — small dependency-free SVG charts in `components/charts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Layout
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app/(auth)        sign-in, sign-up, password reset, email verification
+app/(dashboard)   the signed-in app (dashboard, groups, loans, deposits, reports, admin …)
+app/offline       offline fallback page
+components/       feature components (admin, dashboard, groups, reports, settings, ui …)
+lib/              api clients, auth, i18n, navigation, query hooks
+proxy.ts          route guard before render
+tests/            unit tests (`pnpm test`)
+```

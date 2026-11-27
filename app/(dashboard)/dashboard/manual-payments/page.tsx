@@ -95,7 +95,8 @@ export default function ManualPaymentsPage() {
   const confirmM = useConfirmManualDepositMutation();
   const rejectM = useRejectManualDepositMutation();
 
-  const canTakeAction = groupQ.data?.myRole === ROLE.TREASURER;
+  // Same rule as the API: group admins and treasurers review payments, never their own.
+  const canTakeAction = canReview(groupQ.data?.myRole);
   const list = pendingQ.data ?? [];
   const current = list.find((d) => d.id === proofOpenId) ?? null;
 
@@ -165,7 +166,7 @@ export default function ManualPaymentsPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-text">Manual payments</h1>
             <p className="mt-1 text-sm text-text-muted">
-              Review manual transfer proofs by group. Group admins can view proofs; only treasurers can approve or reject.
+              Review manual transfer proofs by group. Group admins and treasurers can approve or reject, but never their own payment.
             </p>
           </div>
           <div className="w-full max-w-xs space-y-1.5">
@@ -202,8 +203,8 @@ export default function ManualPaymentsPage() {
             <div className="rounded-(--radius) border border-border bg-bg px-4 py-3 text-sm text-text-muted">
               Your role in this group: <span className="font-medium text-text">{groupQ.data.myRole}</span>.
               {canTakeAction
-                ? " You can approve or reject these manual payments."
-                : " You can view proofs, but only the treasurer can approve or reject."}
+                ? " You can approve or reject these manual payments, except your own (another leader reviews those)."
+                : " You can view proofs only."}
             </div>
 
             {list.length === 0 ? (
@@ -228,7 +229,12 @@ export default function ManualPaymentsPage() {
                       <Button type="button" variant="outline" size="sm" onClick={() => setProofOpenId(d.id)}>
                         View proof
                       </Button>
-                      {canTakeAction ? (
+                      {canTakeAction && d.isOwn ? (
+                        <span className="self-center text-xs text-text-muted">
+                          Your payment — another leader must review it
+                        </span>
+                      ) : null}
+                      {canTakeAction && !d.isOwn ? (
                         <>
                           <Button
                             type="button"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n/i18n-context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "@/types/navigation";
@@ -27,6 +28,11 @@ export function SidebarNav({
   onNavigate,
 }: SidebarNavProps) {
   const pathname = usePathname();
+  const tr = useT();
+  const t = (key: string, fallback: string) => {
+    const v = tr(key);
+    return v === key ? fallback : v;
+  };
 
   return (
     <ul
@@ -44,7 +50,7 @@ export function SidebarNav({
           <li key={item.id}>
             <Link
               href={item.href}
-              title={collapsed ? item.label : undefined}
+              title={collapsed ? t(`nav.${item.id}`, item.label) : undefined}
               onClick={() => onNavigate?.()}
               className={cn(
                 "flex touch-manipulation items-center gap-3 rounded-radius-sm px-3 py-2.5 text-sm font-medium transition-[background,color] duration-transition",
@@ -57,7 +63,7 @@ export function SidebarNav({
               <Icon className="size-5 shrink-0 text-primary" aria-hidden />
               {!collapsed ? (
                 <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                  <span className="truncate">{item.label}</span>
+                  <span className="truncate">{t(`nav.${item.id}`, item.label)}</span>
                   {item.badgeCount !== undefined && item.badgeCount > 0 ? (
                     <span className="bg-text shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold text-bg">
                       {item.badgeCount > 99 ? "99+" : String(item.badgeCount).padStart(2, "0")}

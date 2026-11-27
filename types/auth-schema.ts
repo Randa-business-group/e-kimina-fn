@@ -29,6 +29,8 @@ export const userResponseSchema = z.object({
   phoneNumber: z.string().nullable(),
   image: z.string().nullable(),
   emailVerified: z.boolean(),
+  phoneVerifiedAt: z.string().nullable().optional(),
+  twoFactorMethod: z.enum(["TOTP", "SMS"]).nullable().optional(),
   platformRole: roleNameSchema,
   groupMemberships: z.array(groupMembershipSchema),
   createdAt: z.string(),
@@ -39,6 +41,15 @@ export const authResponseSchema = z.object({
   accessToken: z.string(),
   user: userResponseSchema,
 }) satisfies z.ZodType<AuthResponse>;
+
+export const twoFactorChallengeSchema = z.object({
+  twoFactorRequired: z.literal(true),
+  method: z.enum(["TOTP", "SMS"]),
+  challengeToken: z.string(),
+  phoneHint: z.string().nullable(),
+});
+
+export const loginResultSchema = z.union([authResponseSchema, twoFactorChallengeSchema]);
 
 export const registerPendingResponseSchema = z.object({
   needsEmailVerification: z.literal(true),
@@ -53,7 +64,7 @@ export const registerResultSchema = z.union([
 
 export const loginRequestSchema = z.object({
   email: z.string().email("Enter a valid email address"),
-  password: z.string().min(8).max(72),
+  password: z.string().min(1, "Enter your password").max(72),
 }) satisfies z.ZodType<LoginRequest>;
 
 export const registerRequestSchema = z.object({

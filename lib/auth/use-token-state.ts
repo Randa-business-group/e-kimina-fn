@@ -18,7 +18,7 @@ function getServerSnapshot() {
   return false;
 }
 
-/** True when a JWT is stored (client-only). */
+/** True when an access token is held in memory (client-only). */
 export function useHasStoredToken(): boolean {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

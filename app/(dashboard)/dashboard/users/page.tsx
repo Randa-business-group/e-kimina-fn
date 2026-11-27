@@ -1,10 +1,5 @@
-import { DashboardStub } from "@/components/dashboard/dashboard-stub";
+import { UsersAdmin } from "@/components/admin/users-admin";
 
 export default function UsersPage() {
-  return (
-    <DashboardStub
-      title="Users"
-      description="Platform user administration."
-    />
-  );
+  return <UsersAdmin />;
 }
