@@ -29,7 +29,7 @@ function appStatusPill(status: string) {
 export function UserLoanApplicationsList({ applications }: Props) {
   if (applications.length === 0) {
     return (
-      <div className="rounded-(--radius) border border-border bg-bg p-8 text-center text-text-muted">
+      <div className="rounded-(--radius) border border-border bg-bg p-6 text-center text-text-muted">
         You have not requested any group loans yet.
       </div>
     );
@@ -57,7 +57,7 @@ export function UserLoanApplicationsList({ applications }: Props) {
               </div>
               <span
                 className={cn(
-                  "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
+                  "shrink-0 rounded-sm px-2.5 py-1 text-xs font-medium",
                   pill.className,
                 )}
               >

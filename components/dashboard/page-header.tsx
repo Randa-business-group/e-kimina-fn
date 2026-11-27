@@ -8,8 +8,8 @@ type PageHeaderProps = {
 
 export function PageHeader({ title, description, className }: PageHeaderProps) {
   return (
-    <header className={cn("mb-6 sm:mb-8", className)}>
-      <h1 className="text-xl font-semibold tracking-tight text-text sm:text-2xl">
+    <header className={cn("mb-5 sm:mb-6", className)}>
+      <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">
         {title}
       </h1>
       {description ? (

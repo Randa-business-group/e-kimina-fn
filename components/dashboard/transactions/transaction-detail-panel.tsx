@@ -50,17 +50,17 @@ export function TransactionDetailPanel({ transaction: tx }: Props) {
 
   const topIcon =
     tx.type === "DEPOSIT" ? (
-      <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 ring-4 ring-emerald-500/5 dark:text-emerald-500">
+      <div className="flex size-14 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 ring-4 ring-emerald-500/5 dark:text-emerald-500">
         <Landmark className="size-6" />
       </div>
     ) : (
-      <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-primary/5">
+      <div className="flex size-14 items-center justify-center rounded-lg bg-primary/10 text-primary ring-4 ring-primary/5">
         <Users className="size-6" />
       </div>
     );
 
   return (
-    <div className="flex h-full flex-col gap-6 p-6">
+    <div className="flex h-full flex-col gap-5 p-5">
       {/* Icon + name */}
       <div className="flex flex-col items-center gap-3 pt-2 text-center">
         {topIcon}

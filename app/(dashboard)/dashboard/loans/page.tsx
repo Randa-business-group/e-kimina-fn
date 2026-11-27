@@ -56,7 +56,7 @@ export default function LoansPage() {
 
   if (isLoading) {
     return (
-      <main className="flex min-h-[50vh] items-center justify-center bg-bg-muted/30">
+      <main className="flex min-h-[50vh] items-center justify-center">
         <Loader2 className="size-8 animate-spin text-text-muted" />
       </main>
     );
@@ -64,7 +64,7 @@ export default function LoansPage() {
 
   if (isError || !data) {
     return (
-      <main className="min-h-screen bg-bg-muted/30 py-6">
+      <main className="pb-5 lg:pt-2">
         <div className="container mx-auto max-w-4xl px-4">
           <p className="text-destructive">{error?.message ?? "Could not load loans."}</p>
         </div>
@@ -73,11 +73,11 @@ export default function LoansPage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-4xl space-y-6 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-4xl space-y-5 px-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">My loans</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">My loans</h1>
             <p className="mt-1 text-sm text-text-muted">
               Applications, approvals, and repayments (including penalties) through the same
               payment methods as group deposits
@@ -108,7 +108,7 @@ export default function LoansPage() {
         <UserLoansSummaryBar data={filteredData} />
 
         <Tabs defaultValue="applications" className="space-y-4">
-          <TabsList className="border border-border bg-bg">
+          <TabsList>
             <TabsTrigger value="applications" className="data-[state=active]:bg-primary/10">
               Applications ({filteredApplications.length})
             </TabsTrigger>
@@ -121,9 +121,9 @@ export default function LoansPage() {
             <UserLoanApplicationsList applications={filteredApplications} />
           </TabsContent>
 
-          <TabsContent value="loans" className="space-y-6">
+          <TabsContent value="loans" className="space-y-5">
             {filteredMemberLoans.length === 0 ? (
-              <div className="rounded-(--radius) border border-border bg-bg p-8 text-center text-text-muted">
+              <div className="rounded-(--radius) border border-border bg-bg p-6 text-center text-text-muted">
                 You have no disbursed member loans. Approved applications that are fully
                 signed off by both a group admin and the treasurer will appear here.
               </div>

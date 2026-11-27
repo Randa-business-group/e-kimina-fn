@@ -94,7 +94,7 @@ export function RequestLoanModal({
           )}
 
           {isVerified && preview.isLoading && (
-            <div className="flex justify-center py-8 text-text-muted">
+            <div className="flex justify-center py-6 text-text-muted">
               <Loader2 className="size-5 animate-spin" />
             </div>
           )}

@@ -187,7 +187,7 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
 
   if (groupQuery.isError) {
     return (
-      <div className="rounded-(--radius) border border-border bg-secondary px-4 py-8 text-center">
+      <div className="rounded-(--radius) border border-border bg-secondary px-4 py-6 text-center">
         <p className="font-medium text-text">Could not open this group</p>
         <p className="mt-2 text-sm text-text-muted">
           {groupQuery.error instanceof ApiError &&
@@ -215,7 +215,7 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
     (g.isGroupAdmin || g.myRole === ROLE.TREASURER);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <GroupHeader
         name={g.name}
@@ -277,7 +277,7 @@ export function GroupDetailContent({ groupId }: GroupDetailContentProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="members">
-        <TabsList className="h-auto flex-wrap border border-border bg-secondary">
+        <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="members">{t("group.tab.members")}</TabsTrigger>
           <TabsTrigger value="announcements">{t("group.tab.announcements")}</TabsTrigger>
           {isLeaderHere ? <TabsTrigger value="contributions">{t("group.tab.contributions")}</TabsTrigger> : null}

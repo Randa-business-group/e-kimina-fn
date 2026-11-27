@@ -5,21 +5,22 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-bg: #ffffff;
-  --color-surface: #ecf0ef;        /* brand off-white mist */
-  --color-surface-2: #d8e8e3;      /* slightly deeper tint of #005840 */
+  --color-bg: #fffaf6;             /* card / input surface (the page itself uses bg-background) */
+  --color-bg-muted: #f3e3d6;       /* tracks, muted chips, table heads */
+  --color-surface: #faeee4;        /* sidebar / secondary surfaces */
+  --color-surface-2: #f5e1d3;      /* hover / deeper tint */
   /* Used by `bg-secondary` / cards / shell — must be opaque (was missing → transparent drawer on mobile) */
   --color-secondary: var(--color-surface);
   --color-secondary-foreground: var(--color-text);
   --color-secondary-2: var(--color-surface-2);
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-  --color-primary: #005840;        /* ← brand deep forest green */
-  --color-primary-soft: rgba(0, 88, 64, 0.10);
-  --color-accent: #d1f843;         /* ← brand electric lime */
-  --color-accent-soft: rgba(209, 248, 67, 0.20);
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-success: #005840;
+  --color-text: #3a1a0b;           /* ink brown */
+  --color-text-muted: #6f5444;     /* bark */
+  --color-primary: #b5470f;        /* ← brand clay */
+  --color-primary-soft: rgba(181, 71, 15, 0.10);
+  --color-accent: #4e7a2a;         /* ← leaf green */
+  --color-accent-soft: rgba(78, 122, 42, 0.14);
+  --color-border: #f0dfd1;
+  --color-success: #3f7a2a;
   --color-error: #ff5a7d;
   --color-warning: #f59e0b;
   --color-warning-soft: rgba(245, 158, 11, 0.14);
@@ -38,9 +39,10 @@
 
   --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.08);
 
-  --radius-sm: 0.75rem;
-  --radius: 1.25rem;
-  --radius-lg: 2rem;
+  /* Small corners everywhere: the real values come from --radius in :root (8px). */
+  --radius-sm: 0.3rem;
+  --radius: 0.5rem;
+  --radius-lg: 0.5rem;
 
   --transition: 180ms ease-in-out;
 }
@@ -74,24 +76,25 @@
 @layer utilities {
   /* Consistent horizontal + vertical page gutters (mobile → desktop) */
   .p-page {
-    @apply px-4 py-4 sm:px-5 sm:py-5 lg:px-8 lg:py-6;
+    @apply px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5;
   }
 
   .dark {
-    --color-bg: #161616;
-    --color-surface: #26262b;
+    --color-bg: #241c17;
+    --color-bg-muted: #2e231c;
+    --color-surface: #231b16;
     --color-secondary: var(--color-surface);
     --color-secondary-foreground: var(--color-text);
-    --color-surface-2: #101012;
+    --color-surface-2: #2e231c;
     --color-secondary-2: var(--color-surface-2);
-    --color-text: #ffffff;
-    --color-text-muted: #b3b3b3;
-    --color-primary: #08bc8c;      
-    --color-primary-soft: rgba(0, 88, 64, 0.20);
-    --color-accent: #d1f843;   
-    --color-accent-soft: rgba(209, 248, 67, 0.18);
-    --color-border: rgba(255, 255, 255, 0.12);
-    --color-success: #005840;
+    --color-text: #f6ede6;
+    --color-text-muted: #c2ad9e;
+    --color-primary: #e2804a;
+    --color-primary-soft: rgba(226, 128, 74, 0.16);
+    --color-accent: #8fbf5a;
+    --color-accent-soft: rgba(143, 191, 90, 0.16);
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-success: #8fbf5a;
     --color-error: #ff7a90;
     --color-warning: #fbbf24;
     --color-warning-soft: rgba(251, 191, 36, 0.18);
@@ -102,6 +105,7 @@
 }
 
 @theme inline {
+  --font-display: var(--font-display-serif), Georgia, "Times New Roman", serif;
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -145,72 +149,74 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* Warm botanical theme (light) */
+  --background: #fcf4ee;
+  --foreground: #3a1a0b;
+  --card: #fffaf6;
+  --card-foreground: #3a1a0b;
+  --popover: #fffaf6;
+  --popover-foreground: #3a1a0b;
+  --primary: #b5470f;
+  --primary-foreground: #ffffff;
+  --secondary: #faeee4;
+  --secondary-foreground: #3a1a0b;
+  --muted: #f6e6da;
+  --muted-foreground: #6f5444;
+  --accent: #f7e3d4;
+  --accent-foreground: #3a1a0b;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #f0dfd1;
+  --input: #ead6c6;
+  --ring: #b5470f;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.5rem; /* 8px cards & buttons; rounded-md ≈ 6px, rounded-sm ≈ 5px */
+  --sidebar: #faeee4;
+  --sidebar-foreground: #3a1a0b;
+  --sidebar-primary: #b5470f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5e1d3;
+  --sidebar-accent-foreground: #3a1a0b;
+  --sidebar-border: #f0dfd1;
+  --sidebar-ring: #b5470f;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Warm botanical theme (dark) */
+  --background: #1a1411;
+  --foreground: #f6ede6;
+  --card: #231b16;
+  --card-foreground: #f6ede6;
+  --popover: #231b16;
+  --popover-foreground: #f6ede6;
+  --primary: #e2804a;
+  --primary-foreground: #1a1411;
+  --secondary: #2b211b;
+  --secondary-foreground: #f6ede6;
+  --muted: #2b211b;
+  --muted-foreground: #c2ad9e;
+  --accent: #33271f;
+  --accent-foreground: #f6ede6;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 14%);
+  --ring: #e2804a;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: #1f1814;
+  --sidebar-foreground: #f6ede6;
+  --sidebar-primary: #e2804a;
+  --sidebar-primary-foreground: #1a1411;
+  --sidebar-accent: #2e231c;
+  --sidebar-accent-foreground: #f6ede6;
+  --sidebar-border: rgb(255 255 255 / 10%);
+  --sidebar-ring: #e2804a;
 }
 
 @layer base {
@@ -226,20 +232,20 @@
 }
 /* Chart palette (dataviz reference slots 1-3, validated for #ffffff and #161616 surfaces). */
 :root {
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
-  --chart-grid: rgba(15, 23, 42, 0.08);
-  --chart-axis: #64748b;
+  --series-1: #c25a1c;
+  --series-2: #4e7a2a;
+  --series-3: #c8922a;
+  --chart-grid: rgba(58, 26, 11, 0.09);
+  --chart-axis: #6f5444;
   --status-critical: #d93636;
   --status-warning: #b26b00;
 }
 .dark {
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
+  --series-1: #e2804a;
+  --series-2: #8fbf5a;
+  --series-3: #e3b35c;
   --chart-grid: rgba(255, 255, 255, 0.1);
-  --chart-axis: #b3b3b3;
+  --chart-axis: #c2ad9e;
   --status-critical: #ef6b6b;
   --status-warning: #e3a33b;
 }

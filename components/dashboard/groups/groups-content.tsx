@@ -96,7 +96,7 @@ export function GroupsContent() {
     "rounded-md px-3 py-1.5 text-xs font-medium transition-colors duration-[var(--transition)] sm:text-sm";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader
           title="Groups"
@@ -153,7 +153,7 @@ export function GroupsContent() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="mine" className="mt-6 space-y-5 focus-visible:outline-none">
+        <TabsContent value="mine" className="mt-5 space-y-4 focus-visible:outline-none">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-text-muted">
               Groups you are a member of. Verification is required before loan tools unlock.
@@ -255,7 +255,7 @@ export function GroupsContent() {
           ) : null}
         </TabsContent>
 
-        <TabsContent value="discover" className="mt-6 space-y-4 focus-visible:outline-none">
+        <TabsContent value="discover" className="mt-5 space-y-4 focus-visible:outline-none">
           <p className="text-sm text-text-muted">
             Public groups created by others. Join as a member when there is capacity.
           </p>
@@ -336,7 +336,7 @@ function ErrorPanel({ message, onRetry }: { message?: string; onRetry: () => voi
 
 function EmptyPanel({ title, hint }: { title: string; hint: string }) {
   return (
-    <div className="rounded-[var(--radius)] border border-dashed border-border bg-secondary/50 px-6 py-12 text-center">
+    <div className="rounded-[var(--radius)] border border-dashed border-border bg-secondary/50 px-5 py-8 text-center">
       <p className="font-medium text-text">{title}</p>
       <p className="mt-1 text-sm text-text-muted">{hint}</p>
     </div>

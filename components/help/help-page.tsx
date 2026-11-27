@@ -90,10 +90,10 @@ export function HelpPage() {
   const email = settings.data?.supportEmail;
 
   return (
-    <main className="min-h-screen bg-bg-muted/30 py-6">
-      <div className="container mx-auto max-w-3xl space-y-5 px-4">
+    <main className="pb-5 lg:pt-2">
+      <div className="container mx-auto max-w-3xl space-y-4 px-4">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-text">
+          <h1 className="flex items-center gap-2 font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">
             <LifeBuoy className="size-6 text-primary" /> {t("help.title")}
           </h1>
           <p className="mt-1 text-sm text-text-muted">{t("help.subtitle")}</p>

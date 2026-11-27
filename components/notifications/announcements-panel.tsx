@@ -51,7 +51,7 @@ export function AnnouncementsPanel({ groupId, canPost }: { groupId: string; canP
   });
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {canPost ? (
         <section className="space-y-3 rounded-(--radius) border border-border bg-bg p-4">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-text">
@@ -66,7 +66,7 @@ export function AnnouncementsPanel({ groupId, canPost }: { groupId: string; canP
             <Textarea id="ann-body" value={body} maxLength={2000} rows={4} onChange={(e) => setBody(e.target.value)} className="border-border bg-bg" />
             <p className="text-right text-xs text-text-muted">{body.length}/2000</p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-text">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-text">
             <span className="text-xs text-text-muted">Every member sees it in the app. Also send by:</span>
             {(["SMS", "EMAIL", "PUSH"] as Channel[]).map((c) => (
               <label key={c} className="flex items-center gap-2">

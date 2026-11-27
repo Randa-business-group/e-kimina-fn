@@ -96,7 +96,7 @@ export function CreateGroupDialog({ open, onOpenChange }: CreateGroupDialogProps
           "flex max-h-[min(92dvh,44rem)] w-[min(100%,26rem)] flex-col gap-0 overflow-hidden border-border bg-bg p-0 text-text shadow-[var(--shadow-md)] sm:max-w-lg",
         )}
       >
-        <DialogHeader className="space-y-3 border-b border-border px-5 pb-4 pt-5 sm:px-6">
+        <DialogHeader className="space-y-3 border-b border-border px-4 pb-4 pt-4 sm:px-5">
           <div className="flex items-center justify-between gap-3">
             <DialogTitle className="text-left text-xl font-semibold tracking-tight text-text">
               Create a group
@@ -136,9 +136,9 @@ export function CreateGroupDialog({ open, onOpenChange }: CreateGroupDialogProps
           onSubmit={onSubmit}
           className="flex min-h-0 flex-1 flex-col"
         >
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-5 py-4 sm:px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 sm:px-5">
             {step === 0 ? (
-              <div className="space-y-5">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="cg-name" className="text-text">
                     Group name
@@ -223,7 +223,7 @@ export function CreateGroupDialog({ open, onOpenChange }: CreateGroupDialogProps
             )}
           </div>
 
-          <DialogFooter className="flex-shrink-0 flex-col gap-2 border-t border-border bg-bg px-5 py-4 sm:flex-row sm:justify-between sm:px-6">
+          <DialogFooter className="flex-shrink-0 flex-col gap-2 border-t border-border bg-bg px-4 py-4 sm:flex-row sm:justify-between sm:px-5">
             {step === 0 ? (
               <>
                 <Button

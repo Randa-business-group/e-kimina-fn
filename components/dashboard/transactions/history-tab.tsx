@@ -75,8 +75,8 @@ export function HistoryTab({ selectedGroupId }: HistoryTabProps = {}) {
   const error = summaryError || historyError;
 
   return (
-    <div className="flex gap-4 lg:gap-6">
-      <div className="min-w-0 flex-1 space-y-6">
+    <div className="flex gap-4 lg:gap-5">
+      <div className="min-w-0 flex-1 space-y-5">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {summaryLoading
             ? Array.from({ length: 2 }).map((_, i) => (
@@ -148,9 +148,9 @@ export function HistoryTab({ selectedGroupId }: HistoryTabProps = {}) {
           </p>
         )}
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           {loading && !transactions.length ? (
-            <div className="flex items-center justify-center gap-2 py-16 text-sm text-text-muted">
+            <div className="flex items-center justify-center gap-2 py-10 text-sm text-text-muted">
               <Loader2 className="size-4 animate-spin" />
               Loading history…
             </div>
@@ -174,7 +174,7 @@ export function HistoryTab({ selectedGroupId }: HistoryTabProps = {}) {
           ))}
 
           {transactions.length === 0 && !loading && !error && (
-            <p className="py-12 text-center text-sm text-text-muted">
+            <p className="py-8 text-center text-sm text-text-muted">
               No transactions yet.
             </p>
           )}

@@ -99,7 +99,7 @@ export function UsersAdmin() {
               <tbody>
                 {users.data?.items.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-3 py-8 text-center text-text-muted">
+                    <td colSpan={7} className="px-3 py-6 text-center text-text-muted">
                       No accounts match.
                     </td>
                   </tr>
@@ -137,7 +137,7 @@ export function UsersAdmin() {
       )}
 
       <Sheet open={Boolean(openId)} onOpenChange={(o) => !o && setOpenId(null)}>
-        <SheetContent className="w-full overflow-y-auto bg-bg p-6 sm:max-w-xl">
+        <SheetContent className="w-full overflow-y-auto bg-bg p-5 sm:max-w-xl">
           {openId ? <UserDetail id={openId} /> : null}
         </SheetContent>
       </Sheet>
@@ -183,7 +183,7 @@ function UserDetail({ id }: { id: string }) {
   const s = USER_STATUS[u.status];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <SheetHeader className="space-y-1 text-left">
         <SheetTitle className="text-xl text-text">{u.fullName}</SheetTitle>
         <div className="flex flex-wrap items-center gap-2 text-sm text-text-muted">

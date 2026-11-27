@@ -63,7 +63,7 @@ export function JobsPanel() {
       {d.backlog.length ? (
         <ul className="flex flex-wrap gap-2 text-xs">
           {d.backlog.map((b) => (
-            <li key={`${b.type}-${b.status}`} className="rounded-full border border-border px-2 py-0.5 text-text">
+            <li key={`${b.type}-${b.status}`} className="rounded-sm border border-border px-2 py-0.5 text-text">
               {b.type} · {b.status.toLowerCase()} · {b.count}
             </li>
           ))}
@@ -84,7 +84,7 @@ export function JobsPanel() {
           <tbody>
             {!d.problems.length ? (
               <tr>
-                <td colSpan={6} className="px-3 py-8 text-center text-text-muted">
+                <td colSpan={6} className="px-3 py-6 text-center text-text-muted">
                   No failed jobs.
                 </td>
               </tr>

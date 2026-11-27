@@ -61,7 +61,7 @@ export function LoanSettingsTab({
 
   if (loanQuery.isError) {
     return (
-      <div className="rounded-(--radius) border border-border bg-secondary px-4 py-6 text-sm text-text">
+      <div className="rounded-(--radius) border border-border bg-secondary px-4 py-5 text-sm text-text">
         {loanQuery.error instanceof ApiError && loanQuery.error.status === 403
           ? "You cannot view loan settings for this group."
           : (loanQuery.error?.message ?? "Could not load loan settings.")}

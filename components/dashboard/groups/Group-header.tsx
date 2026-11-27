@@ -76,7 +76,7 @@ export function GroupHeader({
   showLoanRequestButton = false,
 }: GroupHeaderProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <Link
@@ -87,7 +87,7 @@ export function GroupHeader({
             Groups
           </Link>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-text">
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.01em] text-text sm:text-[34px]">
               {name}
             </h1>
             {isVerified ? (
@@ -146,7 +146,7 @@ export function GroupHeader({
         ) : null}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-5">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-4">
         <GroupLoanConfigBanner
           state={loanState}
           onRequestLoan={onOpenRequestLoanModal}
@@ -176,7 +176,7 @@ function GroupLoanConfigBanner({
   showRequestButton: boolean;
 }) {
   return (
-    <div className="flex h-full flex-col rounded-(--radius) border border-border bg-secondary/40 px-4 py-4 sm:px-5">
+    <div className="flex h-full flex-col rounded-(--radius) border border-border bg-secondary/40 px-4 py-4 sm:px-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-text">Loan policy</h2>
         <div className="flex items-center gap-2">
@@ -342,7 +342,7 @@ function GroupContributionConfigBanner({
   showDepositButton: boolean;
 }) {
   return (
-    <div className="flex h-full flex-col rounded-(--radius) border border-border bg-secondary/40 px-4 py-4 sm:px-5">
+    <div className="flex h-full flex-col rounded-(--radius) border border-border bg-secondary/40 px-4 py-4 sm:px-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-text">Contribution rules</h2>
         <div className="flex items-center gap-2">

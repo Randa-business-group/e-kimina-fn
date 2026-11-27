@@ -21,7 +21,7 @@ const g = (groupId: string) => `/groups/${encodeURIComponent(groupId)}`;
 const get = async <T,>(p: string) => (await apiClient.get(p)) as unknown as T;
 
 function Empty({ text }: { text: string }) {
-  return <p className="py-6 text-sm text-text-muted">{text}</p>;
+  return <p className="py-5 text-sm text-text-muted">{text}</p>;
 }
 
 function Busy() {
@@ -315,7 +315,7 @@ export function GroupLoansTab({ groupId, isLeader }: { groupId: string; isLeader
 
   const pending = (apps.data ?? []).filter((a) => a.status === "PENDING");
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <section className="space-y-2">
         <h3 className="text-sm font-semibold text-text">{t("loans.pending")}</h3>
         {apps.isLoading ? (
@@ -678,7 +678,7 @@ export function LeaveTab({ groupId, isLeader, myUserId }: { groupId: string; isL
   const p = preview.data;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <section className="space-y-3 rounded-(--radius) border border-border bg-bg p-4">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-text">
           <LogOut className="size-4" /> {t("leave.title")}

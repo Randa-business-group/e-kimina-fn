@@ -7,6 +7,7 @@
  * table view (the light-mode slot 3 is below 3:1 contrast, so the table is the relief).
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Table2, ChartColumn, type LucideIcon } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 export type Series = { key: string; label: string; color: string };
@@ -47,7 +48,8 @@ function useWidth() {
   return { setRef: ref, w };
 }
 
-function Grid({ w, max, fmt }: { w: number; max: number; fmt: (n: number) => string }) {
+/** Grid lines with y labels. With no data (`empty`) only the 0 baseline is labelled, so the axis doesn't show fake values. */
+function Grid({ w, max, fmt, empty = false }: { w: number; max: number; fmt: (n: number) => string; empty?: boolean }) {
   const ticks = [0, 0.25, 0.5, 0.75, 1];
   const innerH = H - PAD.top - PAD.bottom;
   return (
@@ -57,9 +59,11 @@ function Grid({ w, max, fmt }: { w: number; max: number; fmt: (n: number) => str
         return (
           <g key={t}>
             <line x1={PAD.left} x2={w - PAD.right} y1={y} y2={y} stroke="var(--chart-grid)" strokeWidth={1} />
-            <text x={PAD.left - 8} y={y + 4} textAnchor="end" fontSize={11} fill="var(--chart-axis)">
-              {fmt(max * t)}
-            </text>
+            {!empty || t === 0 ? (
+              <text x={PAD.left - 8} y={y + 4} textAnchor="end" fontSize={11} fill="var(--chart-axis)">
+                {fmt(max * t)}
+              </text>
+            ) : null}
           </g>
         );
       })}
@@ -110,7 +114,8 @@ function Tooltip({ x, title, rows, w }: { x: number; title: string; rows: { labe
 export function LineChart({ series, data, fmt = compact, tooltipFmt = rwf }: { series: Series[]; data: Point[]; fmt?: (n: number) => string; tooltipFmt?: (n: number) => string }) {
   const { setRef, w } = useWidth();
   const [hover, setHover] = useState<number | null>(null);
-  const max = useMemo(() => niceMax(Math.max(0, ...data.flatMap((d) => series.map((s) => d.values[s.key] ?? 0)))), [data, series]);
+  const dataMax = useMemo(() => Math.max(0, ...data.flatMap((d) => series.map((s) => d.values[s.key] ?? 0))), [data, series]);
+  const max = niceMax(dataMax);
   const innerW = w - PAD.left - PAD.right;
   const innerH = H - PAD.top - PAD.bottom;
   const xOf = (i: number) => PAD.left + (data.length <= 1 ? innerW / 2 : (innerW * i) / (data.length - 1));
@@ -123,7 +128,7 @@ export function LineChart({ series, data, fmt = compact, tooltipFmt = rwf }: { s
   return (
     <div ref={setRef} className="relative w-full">
       <svg width="100%" height={H} viewBox={`0 0 ${w} ${H}`} role="img" aria-label={series.map((s) => s.label).join(", ")}>
-        <Grid w={w} max={max} fmt={fmt} />
+        <Grid w={w} max={max} fmt={fmt} empty={dataMax <= 0} />
         {series.map((s) => (
           <polyline
             key={s.key}
@@ -169,7 +174,8 @@ export function LineChart({ series, data, fmt = compact, tooltipFmt = rwf }: { s
 export function BarChart({ series, data, fmt = compact, tooltipFmt = rwf }: { series: Series; data: Point[]; fmt?: (n: number) => string; tooltipFmt?: (n: number) => string }) {
   const { setRef, w } = useWidth();
   const [hover, setHover] = useState<number | null>(null);
-  const max = niceMax(Math.max(0, ...data.map((d) => d.values[series.key] ?? 0)));
+  const dataMax = Math.max(0, ...data.map((d) => d.values[series.key] ?? 0));
+  const max = niceMax(dataMax);
   const innerW = w - PAD.left - PAD.right;
   const innerH = H - PAD.top - PAD.bottom;
   const band = innerW / Math.max(1, data.length);
@@ -179,7 +185,7 @@ export function BarChart({ series, data, fmt = compact, tooltipFmt = rwf }: { se
   return (
     <div ref={setRef} className="relative w-full">
       <svg width="100%" height={H} viewBox={`0 0 ${w} ${H}`} role="img" aria-label={series.label}>
-        <Grid w={w} max={max} fmt={fmt} />
+        <Grid w={w} max={max} fmt={fmt} empty={dataMax <= 0} />
         {data.map((d, i) => {
           const v = d.values[series.key] ?? 0;
           const h = (v / max) * innerH;
@@ -219,6 +225,7 @@ export function ChartCard({
   children,
   tooltipFmt = rwf,
   className,
+  icon: Icon = ChartColumn,
 }: {
   title: string;
   description?: string;
@@ -227,20 +234,27 @@ export function ChartCard({
   children: ReactNode;
   tooltipFmt?: (n: number) => string;
   className?: string;
+  /** Icon beside the title. */
+  icon?: LucideIcon;
 }) {
   const [table, setTable] = useState(false);
   return (
-    <section className={cn("rounded-(--radius) border border-border bg-bg p-4", className)}>
-      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h3 className="text-sm font-semibold text-text">{title}</h3>
-          {description ? <p className="text-xs text-text-muted">{description}</p> : null}
+    <section className={cn("rounded-(--radius) border border-border bg-card p-4 shadow-[0_1px_2px_rgba(91,48,20,0.04)] sm:p-4", className)}>
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <Icon aria-hidden className="mt-0.5 size-6 shrink-0 text-primary" strokeWidth={1.8} />
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold text-text sm:text-lg">{title}</h3>
+            {description ? <p className="mt-0.5 text-sm text-text-muted">{description}</p> : null}
+          </div>
         </div>
         <button
           type="button"
           onClick={() => setTable((t) => !t)}
-          className="rounded-md border border-border px-2 py-1 text-xs text-text-muted hover:text-text"
+          aria-pressed={table}
+          className="flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm text-text transition hover:bg-secondary"
         >
+          {table ? <ChartColumn aria-hidden className="size-4" /> : <Table2 aria-hidden className="size-4" />}
           {table ? "Show chart" : "Show table"}
         </button>
       </div>
@@ -289,23 +303,43 @@ export function ChartCard({
 }
 
 /** Hero number tile (no chart): label, value, optional note and status tone. */
-export function StatTile({ label, value, note, tone }: { label: string; value: string; note?: string; tone?: "critical" | "warning" }) {
+export function StatTile({
+  label,
+  value,
+  note,
+  tone,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  note?: string;
+  tone?: "critical" | "warning";
+  /** Optional icon shown in a soft square beside (or, on narrow tiles, above) the figures. */
+  icon?: LucideIcon;
+}) {
   return (
-    <div className="rounded-(--radius) border border-border bg-bg p-4">
-      <p className="text-xs font-medium text-text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-bold tabular-nums text-text">{value}</p>
-      {note ? (
-        <p className="mt-1 flex items-center gap-1.5 text-xs text-text-muted">
-          {tone ? (
-            <span
-              className="inline-block size-2 rounded-full"
-              style={{ background: tone === "critical" ? "var(--status-critical)" : "var(--status-warning)" }}
-              aria-hidden
-            />
-          ) : null}
-          {note}
-        </p>
+    <div className="flex flex-col gap-3 rounded-(--radius) border border-border bg-card p-4 shadow-[0_1px_2px_rgba(91,48,20,0.04)] sm:flex-row sm:items-start sm:gap-4">
+      {Icon ? (
+        <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary sm:size-12">
+          <Icon className="size-5 sm:size-6" strokeWidth={1.8} />
+        </span>
       ) : null}
+      <div className="min-w-0">
+        <p className="text-sm text-text">{label}</p>
+        <p className="mt-1 text-[22px] font-semibold leading-tight tabular-nums text-text sm:text-[26px]">{value}</p>
+        {note ? (
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-text-muted">
+            {tone ? (
+              <span
+                className="inline-block size-2 rounded-full"
+                style={{ background: tone === "critical" ? "var(--status-critical)" : "var(--status-warning)" }}
+                aria-hidden
+              />
+            ) : null}
+            {note}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

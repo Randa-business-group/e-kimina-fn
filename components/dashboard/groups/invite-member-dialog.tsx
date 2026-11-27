@@ -80,7 +80,7 @@ export function InviteMemberDialog({
           "w-[min(100%,26rem)] border-border bg-bg p-0 text-text shadow-[var(--shadow-md)]",
         )}
       >
-        <DialogHeader className="space-y-2 border-b border-border px-5 pb-4 pt-5 sm:px-6">
+        <DialogHeader className="space-y-2 border-b border-border px-4 pb-4 pt-4 sm:px-5">
           <DialogTitle className="text-left text-xl font-semibold tracking-tight text-text">
             Invite team member
           </DialogTitle>
@@ -90,7 +90,7 @@ export function InviteMemberDialog({
             once they complete sign-up, their account is active and they are part of the group.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={onSubmit} className="px-5 pb-5 sm:px-6">
+        <form onSubmit={onSubmit} className="px-4 pb-4 sm:px-5">
           <div className="space-y-2">
             <Label htmlFor="invite-email" className="text-text">
               Email
@@ -110,7 +110,7 @@ export function InviteMemberDialog({
               <p className="text-xs text-destructive">{form.formState.errors.email.message}</p>
             ) : null}
           </div>
-          <DialogFooter className="mt-6 flex-col gap-2 sm:flex-row sm:justify-end">
+          <DialogFooter className="mt-5 flex-col gap-2 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"

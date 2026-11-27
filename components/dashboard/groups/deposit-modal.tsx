@@ -226,7 +226,7 @@ export function DepositModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md border-border bg-bg p-0 sm:max-w-lg">
-        <div className="border-b border-border px-5 pb-3 pt-5">
+        <div className="border-b border-border px-4 pb-3 pt-4">
           <DialogHeader>
             <DialogTitle className="text-left text-lg font-bold text-text">
               {title ?? (memberLoanId ? "Repay loan" : "Make a Deposit")}
@@ -234,9 +234,9 @@ export function DepositModal({
           </DialogHeader>
         </div>
 
-        <div className="space-y-5 px-5 py-4">
+        <div className="space-y-4 px-4 py-4">
           {groupDetailLoading && (
-            <div className="flex items-center justify-center gap-2 py-10 text-text-muted">
+            <div className="flex items-center justify-center gap-2 py-8 text-text-muted">
               <Loader2 className="size-5 animate-spin" />
               Loading group…
             </div>
@@ -247,7 +247,7 @@ export function DepositModal({
           )}
 
           {!groupDetailLoading && isVerified && preview.isLoading && (
-            <div className="flex items-center justify-center gap-2 py-10 text-text-muted">
+            <div className="flex items-center justify-center gap-2 py-8 text-text-muted">
               <Loader2 className="size-5 animate-spin" />
               Loading…
             </div>
@@ -268,7 +268,7 @@ export function DepositModal({
           )}
 
           {pendingMomoId && (
-            <div className="flex flex-col items-center gap-3 rounded-(--radius) border border-border bg-secondary/60 px-4 py-8 text-center">
+            <div className="flex flex-col items-center gap-3 rounded-(--radius) border border-border bg-secondary/60 px-4 py-6 text-center">
               <Loader2 className="size-6 animate-spin text-primary" />
               <p className="text-sm font-medium text-text">Approve the payment on your phone</p>
               <p className="text-xs text-text-muted">

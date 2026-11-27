@@ -146,7 +146,7 @@ function SettingsForm({ s }: { s: PlatformSettings }) {
   const field = "h-9 border-border bg-bg";
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl space-y-5">
       <Section title="Currencies">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">

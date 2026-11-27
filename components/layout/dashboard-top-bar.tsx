@@ -1,6 +1,6 @@
 "use client";
 
-import { Languages, Menu, Moon, Sun } from "lucide-react";
+import { ChevronDown, Globe, Menu, Moon, Sun } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { LOCALES, LOCALE_NAMES } from "@/lib/i18n/dictionaries";
@@ -20,22 +20,22 @@ export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
   return (
     <header
       className={cn(
-        "relative z-20 flex min-h-14 shrink-0 items-center gap-2 border-b border-border bg-bg",
+        "relative z-20 flex min-h-16 shrink-0 items-center gap-2.5 border-b border-border bg-secondary sm:gap-3",
         "px-3 pt-[max(0px,env(safe-area-inset-top,0px))] pb-0 sm:px-4",
-        "lg:pt-0",
+        "lg:border-b-0 lg:bg-transparent lg:pt-0 lg:pl-6 lg:pr-6",
       )}
     >
       <Button
         type="button"
         variant="ghost"
         size="icon"
-        className="shrink-0 text-text-muted hover:bg-primary-soft hover:text-text lg:hidden"
+        className="size-10 shrink-0 rounded-md border border-border bg-card/60 text-text hover:bg-card lg:hidden"
         onClick={onOpenMobileNav}
         aria-label={t("shell.openMenu")}
       >
         <Menu className="size-5" />
       </Button>
-      <span className="mr-auto min-w-0 truncate text-xs font-medium uppercase tracking-wider text-text-muted sm:text-sm">
+      <span className="mr-auto min-w-0 truncate text-xs font-semibold uppercase tracking-[0.24em] text-text sm:text-[13px]">
         {t("shell.workspace")}
       </span>
       <DropdownMenu>
@@ -44,11 +44,12 @@ export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
             type="button"
             variant="ghost"
             size="sm"
-            className="shrink-0 gap-1.5 px-2 text-text-muted hover:bg-primary-soft hover:text-text"
+            className="h-10 shrink-0 gap-1.5 rounded-md border border-border bg-card/60 px-3 text-text hover:bg-card"
             aria-label={t("shell.language")}
           >
-            <Languages className="size-4" />
-            <span className="text-xs font-semibold uppercase">{locale}</span>
+            <Globe className="size-4.5" />
+            <span className="text-sm font-semibold uppercase">{locale}</span>
+            <ChevronDown className="size-4 text-text-muted" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -62,11 +63,11 @@ export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
       <NotificationBell />
       <Button
         type="button"
-        variant="outline"
+        variant="ghost"
         size="sm"
         className={cn(
-          "shrink-0 border-border bg-secondary text-text hover:bg-primary-soft",
-          "gap-2 px-2.5 sm:px-3",
+          "h-10 shrink-0 rounded-md border border-border bg-card/60 text-text hover:bg-card",
+          "gap-2 px-3 text-sm font-medium",
         )}
         onClick={() => toggleTheme()}
         aria-label={
@@ -75,12 +76,12 @@ export function DashboardTopBar({ onOpenMobileNav }: DashboardTopBarProps) {
       >
         {mounted && theme === "dark" ? (
           <>
-            <Sun className="size-4 shrink-0" />
+            <Sun className="size-4.5 shrink-0 text-primary" />
             <span className="hidden sm:inline">{t("shell.light")}</span>
           </>
         ) : (
           <>
-            <Moon className="size-4 shrink-0" />
+            <Moon className="size-4.5 shrink-0 text-primary" />
             <span className="hidden sm:inline">{t("shell.dark")}</span>
           </>
         )}
